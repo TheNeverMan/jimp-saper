@@ -1,6 +1,6 @@
 CC	  = gcc
 FLAGS = -Wall -pedantic -ansi
-FILES = ui/ui.c
+FILES = ui/ui.c ui/ui_menu.c ui/ui_misc.c
 LIBS	= -lcurses -lmenu
 all: $(FILES) main.c
 	$(CC) $(FLAGS) -o saper main.c $(FILES) $(LIBS)
