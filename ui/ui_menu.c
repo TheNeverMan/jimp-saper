@@ -44,6 +44,9 @@ void Destroy_Menu(UI_Menu* Menu)
 {
   unpost_menu(Menu->Menu);
   free_menu(Menu->Menu);
+  wborder(Menu->Menu_Window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+  wrefresh(Menu->Menu_Window);
+  delwin(Menu->Menu_Window);
   size_t index = Menu->options_length;
   while(index --> Menu->options_length)
     free_item(Menu->Menu_Items[index]);

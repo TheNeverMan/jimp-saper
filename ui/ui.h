@@ -3,9 +3,11 @@
 #include <menu.h>
 #include <stdlib.h>
 #include <string.h>
+#include <form.h>
 
 #include "colors.h"
 #include "ui_menu.h"
+#include "ui_form.h"
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 

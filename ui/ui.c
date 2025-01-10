@@ -13,6 +13,8 @@ void Init_UI()
   init_pair(SELECTABLE_TEXT_COLOR, COLOR_YELLOW, COLOR_BLACK);
   init_pair(DISABLED_TEXT_COLOR, COLOR_YELLOW, COLOR_BLACK);
   init_pair(INPUT_TEXT_COLOR, COLOR_WHITE, COLOR_BLUE);
+  init_pair(ENTERED_TEXT_COLOR, COLOR_WHITE, COLOR_BLUE);
+  init_pair(HIGHLITED_TEXT_COLOR, COLOR_WHITE, COLOR_BLUE);
   attron(COLOR_PAIR(STANDARD_TEXT_COLOR));
   curs_set(FALSE);
 }
@@ -20,6 +22,8 @@ void Init_UI()
 void Uninit_UI()
 {
   endwin();
+  curs_set(TRUE);
+
 }
 
 void Show_Highscores()
@@ -55,7 +59,23 @@ void Show_Highscores()
 
 Map_Properties Show_Custom_Size_Dialog()
 {
-
+  char* Field_Descriptions[] = {
+    "Rows: ",
+    "Columns: ",
+    "Mines: ",
+  /*  (char*)NULL*/
+  };
+  FIELDTYPE* Field_Types[] = {
+    TYPE_INTEGER,
+    TYPE_INTEGER,
+    TYPE_INTEGER,
+    /*(FIELDTYPE*) NULL*/
+  };
+  char Form_Title[] = "Enter Game Properties (Space accepts, ESC goes back to main menu)";
+  UI_Form* Custom_Size_Form = Create_Form(Field_Descriptions,Field_Types,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
+  Display_Form(Custom_Size_Form);
+  char** out = Run_Form(Custom_Size_Form);
+  Destroy_Form(Custom_Size_Form);
 }
 
 void Show_Game_Creation_Dialog()
