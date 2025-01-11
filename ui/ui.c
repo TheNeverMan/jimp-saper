@@ -88,12 +88,13 @@ Map_Properties Show_Custom_Size_Dialog(bool second_time)
     "Confirm",
   };
   char* Form_Title;
+  char** Menu_Out = NULL;
+  UI_Form* Custom_Size_Form;
   if(!second_time)
     Form_Title = "Enter Game Properties (Space accepts)";
   else
     Form_Title = "Invalid Values!";
-  UI_Form* Custom_Size_Form = Create_Form(Field_Descriptions,INPUT_NUM,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
-  char** Menu_Out = NULL;
+  Custom_Size_Form = Create_Form(Field_Descriptions,INPUT_NUM,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
   Display_Form(Custom_Size_Form);
   Menu_Out = Run_Form(Custom_Size_Form);
   Destroy_Form(Custom_Size_Form);
@@ -104,11 +105,12 @@ void Show_Map(Map_Properties Properties)
 {
   size_t size_x = 7+3;
   size_t size_y = 25+2;
+  WINDOW* Main_Game_Window = NULL;
   if(size_x < (Properties.rows+3))
     size_x = Properties.rows;
   if(size_y < (Properties.cols+2))
     size_y = Properties.cols;
-  WINDOW* Main_Game_Window = newwin(size_x,size_y,0,0);
+  Main_Game_Window = newwin(size_x,size_y,0,0);
   box(Main_Game_Window,0,0);
   mvwprintw(Main_Game_Window,1,1,"Map %lux%lu (%lu mines left)",Properties.rows,Properties.cols,Properties.mines);
   Move_Window_To_Center(Main_Game_Window);
