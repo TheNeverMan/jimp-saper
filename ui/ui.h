@@ -21,4 +21,5 @@ typedef struct
 void Show_Main_Menu();
 void Show_Highscores();
 void Show_Game_Creation_Dialog();
-Map_Properties Show_Custom_Size_Dialog();
+Map_Properties Show_Custom_Size_Dialog(bool second_time);
+void Show_Map(Map_Properties Properties);

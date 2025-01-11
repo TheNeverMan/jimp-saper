@@ -57,22 +57,64 @@ void Show_Highscores()
   Destroy_Menu(Highscore_Menu);
 }
 
-Map_Properties Show_Custom_Size_Dialog()
+Map_Properties Convert_Char_To_Map_Properties(char** tab)
+{
+  Map_Properties out = {0,0,0};
+  if(!tab)
+    return out;
+  out.rows = atoi(tab[0]);
+  out.cols = atoi(tab[1]);
+  out.mines = atoi(tab[2]);
+  return out;
+}
+
+bool Validate_Map_Properties(Map_Properties Properties)
+{
+  if((Properties.rows * Properties.cols) < Properties.mines)
+    return FALSE;
+  if(Properties.rows < 5 || Properties.cols < 5 || Properties.mines < 1)
+    return FALSE;
+  if(Properties.rows > 300 || Properties.cols > 300 || Properties.mines > 999)
+    return FALSE;
+  return TRUE;
+}
+
+Map_Properties Show_Custom_Size_Dialog(bool second_time)
 {
   char* Field_Descriptions[] = {
     "Rows: ",
     "Columns: ",
     "Mines: ",
-  /*  (char*)NULL*/
+    "Confirm",
   };
-  char Form_Title[] = "Enter Game Properties (Space accepts, ESC goes back to main menu)";
-  UI_Form* Custom_Size_Form = Create_Form(Field_Descriptions,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
+  char* Form_Title;
+  if(!second_time)
+    Form_Title = "Enter Game Properties (Space accepts)";
+  else
+    Form_Title = "Invalid Values!";
+  UI_Form* Custom_Size_Form = Create_Form(Field_Descriptions,INPUT_NUM,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
   char** Menu_Out = NULL;
-  Map_Properties out = {0,0,0};
   Display_Form(Custom_Size_Form);
   Menu_Out = Run_Form(Custom_Size_Form);
   Destroy_Form(Custom_Size_Form);
-  return out;
+  return  Convert_Char_To_Map_Properties(Menu_Out);
+}
+
+void Show_Map(Map_Properties Properties)
+{
+  size_t size_x = 7+3;
+  size_t size_y = 25+2;
+  if(size_x < (Properties.rows+3))
+    size_x = Properties.rows;
+  if(size_y < (Properties.cols+2))
+    size_y = Properties.cols;
+  WINDOW* Main_Game_Window = newwin(size_x,size_y,0,0);
+  box(Main_Game_Window,0,0);
+  mvwprintw(Main_Game_Window,1,1,"Map %lux%lu (%lu mines left)",Properties.rows,Properties.cols,Properties.mines);
+  Move_Window_To_Center(Main_Game_Window);
+  wrefresh(Main_Game_Window);
+  getch();
+  Clear_Window(Main_Game_Window);
 }
 
 void Show_Game_Creation_Dialog()
@@ -118,12 +160,21 @@ void Show_Game_Creation_Dialog()
       Created_Map_Properties.mines = 99;
       break;
     case 3:
-      Created_Map_Properties = Show_Custom_Size_Dialog();
+      {
+        bool second_time = FALSE;
+        do
+        {
+          Created_Map_Properties = Show_Custom_Size_Dialog(second_time);
+          second_time = TRUE;
+        }
+        while(!Validate_Map_Properties(Created_Map_Properties));
+      }
       break;
     default:
       /* exit */
       break;
   }
+  Show_Map(Created_Map_Properties);
 }
 
 void Show_Main_Menu()

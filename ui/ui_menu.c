@@ -10,7 +10,7 @@ UI_Menu* Create_Menu(char** Menu_Options, char** Menu_Descriptions, char* Menu_T
   out->window_cols = window_cols;
   out->window_rows = window_rows;
   out->options_length = options_length;
-  out->Menu_Items = (ITEM**)calloc(options_length, sizeof(ITEM*));
+  out->Menu_Items = (ITEM**)calloc(options_length+1, sizeof(ITEM*));
   out->Menu_Window = Create_Window_In_The_Middle(out->window_rows,out->window_cols);
 
   for(index = 0; index <  out->options_length; ++index)
@@ -45,11 +45,9 @@ void Destroy_Menu(UI_Menu* Menu)
   size_t index = Menu->options_length;
   unpost_menu(Menu->Menu);
   free_menu(Menu->Menu);
-  wborder(Menu->Menu_Window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
-  wrefresh(Menu->Menu_Window);
-  delwin(Menu->Menu_Window);
   while(index --> Menu->options_length)
     free_item(Menu->Menu_Items[index]);
+  Clear_Window(Menu->Menu_Window);
   free(Menu);
 }
 
