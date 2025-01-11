@@ -4,6 +4,5 @@
 
 int main(int argv, char** argc)
 {
-  Show_Main_Menu();
   return 0;
 }

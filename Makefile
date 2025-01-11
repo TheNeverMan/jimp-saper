@@ -1,7 +1,7 @@
 CC	  = gcc
 FLAGS = -Wall -pedantic -ansi
 TEST_FLAGS = -ggdb
-FILES = ui/ui.c ui/ui_menu.c ui/ui_misc.c ui/ui_form.c
+FILES = backend/board.c backend/game.c backend/input.c backend/score.c
 LIBS	= -lcurses -lmenu -lform
 all: $(FILES) main.c
 	$(CC) $(FLAGS) $(TEST_FLAGS) -o saper main.c $(FILES) $(LIBS)
