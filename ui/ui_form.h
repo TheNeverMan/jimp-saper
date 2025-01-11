@@ -10,7 +10,6 @@
 typedef struct
 {
   char** Field_Descriptions;
-  FIELDTYPE** Field_Types;
   char* Form_Title;
   size_t descriptions_length;
   size_t window_cols;
@@ -20,7 +19,7 @@ typedef struct
   FORM* Form;
 } UI_Form;
 
-UI_Form* Create_Form(char** Field_Descriptions, FIELDTYPE** Field_Types, char* Form_Title, size_t descriptions_length, size_t window_cols, size_t window_rows);
+UI_Form* Create_Form(char** Field_Descriptions, char* Form_Title, size_t descriptions_length, size_t window_cols, size_t window_rows);
 char** Run_Form(UI_Form* Form);
 void Destroy_Form(UI_Form* Form);
 void Display_Form(UI_Form* Form);

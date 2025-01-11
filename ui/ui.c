@@ -53,7 +53,7 @@ void Show_Highscores()
   while(index --> 0)
     item_opts_off(Highscore_Menu->Menu_Items[index],O_SELECTABLE);
   Display_Menu(Highscore_Menu);
-  int output = Run_Menu(Highscore_Menu);
+  Run_Menu(Highscore_Menu);
   Destroy_Menu(Highscore_Menu);
 }
 
@@ -65,17 +65,14 @@ Map_Properties Show_Custom_Size_Dialog()
     "Mines: ",
   /*  (char*)NULL*/
   };
-  FIELDTYPE* Field_Types[] = {
-    TYPE_INTEGER,
-    TYPE_INTEGER,
-    TYPE_INTEGER,
-    /*(FIELDTYPE*) NULL*/
-  };
   char Form_Title[] = "Enter Game Properties (Space accepts, ESC goes back to main menu)";
-  UI_Form* Custom_Size_Form = Create_Form(Field_Descriptions,Field_Types,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
+  UI_Form* Custom_Size_Form = Create_Form(Field_Descriptions,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
+  char** Menu_Out = NULL;
+  Map_Properties out = {0,0,0};
   Display_Form(Custom_Size_Form);
-  char** out = Run_Form(Custom_Size_Form);
+  Menu_Out = Run_Form(Custom_Size_Form);
   Destroy_Form(Custom_Size_Form);
+  return out;
 }
 
 void Show_Game_Creation_Dialog()
@@ -98,10 +95,11 @@ void Show_Game_Creation_Dialog()
   };
   char Menu_Title[] = "Select Difficulty";
   UI_Menu* Game_Creation_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,12);
-  Display_Menu(Game_Creation_Menu);
-  int output = Run_Menu(Game_Creation_Menu);
-  Destroy_Menu(Game_Creation_Menu);
   Map_Properties Created_Map_Properties;
+  int output = 0;
+  Display_Menu(Game_Creation_Menu);
+  output = Run_Menu(Game_Creation_Menu);
+  Destroy_Menu(Game_Creation_Menu);
   switch(output)
   {
     case 0:
@@ -145,14 +143,14 @@ void Show_Main_Menu()
     (char*)NULL
   };
   char Menu_Title[] = "Minesweeper - Leopold Kucinski & Kajetan Wojcik";
-  int c = 0;
-  Init_UI();
   bool loop = TRUE;
+  Init_UI();
   while(loop)
   {
     UI_Menu* Main_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,10);
+    size_t selected_option = 0;
     Display_Menu(Main_Menu);
-    size_t selected_option = Run_Menu(Main_Menu);
+    selected_option = Run_Menu(Main_Menu);
     Destroy_Menu(Main_Menu);
     switch(selected_option)
     {
