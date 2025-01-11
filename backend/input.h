@@ -3,6 +3,12 @@
 
 #include "board.h"
 
+typedef enum {
+    REVEAL,
+    FLAG,
+    UNFLAG
+} Action;
+
 typedef struct input
 {
     char move;
@@ -18,9 +24,10 @@ typedef struct file
 } File;
 
 File readFiles(const char* inputFile, const char* mapFile);
-void readInputs(File* file, const char* fileName);
-void readMap(File* file, const char* fileName);
-void changeState(Board* board, int row, int col, Action action);
+int readInputs(File* file, const char* fileName);
+int readMap(File* file, const char* fileName);
+int changeState(Board* board, int row, int col, Action action);
+void cleanFiles();
 
 
 #endif

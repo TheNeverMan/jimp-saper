@@ -7,6 +7,7 @@
 void testReadFiles(const char* mapFile, const char* inputFile) 
 {
   File file = readFiles(inputFile, mapFile);
+  if(file.inputCount == -1) return;
 
   printf("Map size: %d rows, %d columns\n", file.inputBoard.size.rows, file.inputBoard.size.columns);
   
@@ -26,8 +27,7 @@ void testReadFiles(const char* mapFile, const char* inputFile)
     printf("Move: %c, Row: %d, Column: %d\n", file.inputs[i].move, file.inputs[i].row, file.inputs[i].column);
   }
 
-  cleanBoard(&file.inputBoard);
-  free(file.inputs);
+  cleanFiles(&file);
 }
 
 void printBoard(const Board* board) 

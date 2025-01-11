@@ -1,12 +1,6 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-typedef enum {
-    REVEAL,
-    FLAG,
-    UNFLAG
-} Action;
-
 typedef struct size
 {
     int columns;

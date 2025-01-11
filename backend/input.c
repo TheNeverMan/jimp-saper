@@ -8,44 +8,55 @@
 
 File readFiles(const char* inputFile, const char* mapFile)
 {
-    File file;
+    File file = {.inputs = NULL};
 
-    readMap(&file, mapFile);
-    readInputs(&file, inputFile);
+    if(readMap(&file, mapFile) != 0) file.inputCount = -1;
+    else if(readInputs(&file, inputFile) != 0) file.inputCount = -1;
 
     return file;
 }
 
-void readInputs(File* file, const char* fileName)
+
+int readInputs(File* file, const char* fileName)
 {
     FILE* fileStream = fopen(fileName, "r");
 
     if (!fileStream) 
     {
         printf("Error opening file!\n");
-        return;
+        return 1;
     }
 
     char action;
     int row, col;
-    file->inputCount = 0;
+    file->inputCount = -1;
+    int result;
 
-    while(fscanf(fileStream, " %c %d %d", &action, &row, &col) == 3)
+    do
     {
+        result = fscanf(fileStream, " %c %d %d", &action, &row, &col);
         if(action != 'f' && action != 'r')
         {
             printf("Invalid action!\n");
             fclose(fileStream);
-            return;
+            return 2;
         }
         else if(row < 0 || row >= file->inputBoard.size.rows || col < 0 || col >= file->inputBoard.size.columns)
         {
             printf("Invalid postion!\n");
             fclose(fileStream);
-            return;
+            return 3;
+        }
+        else if(result == 1 || result == 2)
+        {
+            printf("Error!\n");
+            fclose(fileStream);
+            return 4;
         }
         file->inputCount++;
     }
+    while(result == 3);
+    
     rewind(fileStream);
 
     file->inputs = calloc(file->inputCount, sizeof(Input));
@@ -56,16 +67,17 @@ void readInputs(File* file, const char* fileName)
     }
 
     fclose(fileStream);
+    return 0;
 }
 
-void readMap(File* file, const char* fileName)
+int readMap(File* file, const char* fileName)
 {
     FILE* fileStream = fopen(fileName, "r");
 
     if (!fileStream) 
     {
         printf("Error opening file!\n");
-        return;
+        return 1;
     }
 
     int result = fscanf(fileStream, "%d %d", &file->inputBoard.size.rows, &file->inputBoard.size.columns);
@@ -73,8 +85,22 @@ void readMap(File* file, const char* fileName)
     {
         printf("Wrong map file format!\n");
         fclose(fileStream);
-        return;
+        return 2;
     }
+
+    int count = 0;
+    int temp;
+
+    while(fscanf(fileStream, "%d", &temp) == 1) count++;
+    if(count != file->inputBoard.size.rows * file->inputBoard.size.columns)
+    {
+        printf("Wrong map file format!\n");
+        fclose(fileStream);
+        return 3;
+    }
+
+    rewind(fileStream);
+    for(int i = 0; i < 2; i++) fscanf(fileStream, "%d", &temp);
 
     file->inputBoard = initBoard(file->inputBoard.size.rows, file->inputBoard.size.columns);
 
@@ -87,20 +113,27 @@ void readMap(File* file, const char* fileName)
             {
                 printf("Wrong map file format!\n");
                 fclose(fileStream);
-                return;
+                return 4;
+            }
+            else if(file->inputBoard.tab[i][j].mineState != 0 && file->inputBoard.tab[i][j].mineState != 1)
+            {
+                printf("Wrong map file format!\n");
+                fclose(fileStream);
+                return 5; 
             }
         }
     }
 
     fclose(fileStream);
+    return 0;
 }
 
-void changeState(Board* board, int row, int col, Action action)
+int changeState(Board* board, int row, int col, Action action)
 {
     if(row < 0 || row >= board->size.rows || col < 0 || col >= board->size.columns)
     {
         printf("Invalid row or column\n");
-        return;
+        return 1;
     }
     
     SquareState* square = &board->tab[row][col];
@@ -154,4 +187,11 @@ void changeState(Board* board, int row, int col, Action action)
         printf("Invalid action!\n");
         break;
     }
+    return 0;
+}
+
+void cleanFiles(File* file)
+{
+    if(file->inputs != NULL) free(file->inputs);
+    cleanBoard(&file->inputBoard);
 }
