@@ -12,11 +12,15 @@ typedef struct input
 
 typedef struct file
 {
-    Board inputBoard; /* Dane z plików */
+    Board inputBoard;
     Input* inputs;
+    int inputCount;
 } File;
 
-void readInputs();
-void readMap();
+File readFiles(const char* inputFile, const char* mapFile);
+void readInputs(File* file, const char* fileName);
+void readMap(File* file, const char* fileName);
+void changeState(Board* board, int row, int col, Action action);
+
 
 #endif

@@ -1,5 +1,5 @@
 CC	  = gcc
-FLAGS = -Wall -pedantic -ansi
+FLAGS = -Wall -pedantic -std=c99
 TEST_FLAGS = -ggdb
 FILES = backend/board.c backend/game.c backend/input.c backend/score.c
 LIBS	= -lcurses -lmenu -lform
