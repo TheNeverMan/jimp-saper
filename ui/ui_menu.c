@@ -3,16 +3,16 @@
 UI_Menu* Create_Menu(char** Menu_Options, char** Menu_Descriptions, char* Menu_Title, size_t options_length, size_t window_cols, size_t window_rows)
 {
   UI_Menu* out = malloc(sizeof(UI_Menu));
+  size_t index = 0;
   out->Menu_Options = Menu_Options;
   out->Menu_Descriptions = Menu_Descriptions;
   out->Menu_Title = Menu_Title;
   out->window_cols = window_cols;
   out->window_rows = window_rows;
   out->options_length = options_length;
-  out->Menu_Items = (ITEM**)calloc(options_length, sizeof(ITEM*));
+  out->Menu_Items = (ITEM**)calloc(options_length+1, sizeof(ITEM*));
   out->Menu_Window = Create_Window_In_The_Middle(out->window_rows,out->window_cols);
 
-  size_t index = 0;
   for(index = 0; index <  out->options_length; ++index)
     out->Menu_Items[index] = new_item(out->Menu_Options[index],out->Menu_Descriptions[index]);
   out->Menu_Items[out->options_length] = (ITEM *)NULL;
@@ -42,20 +42,18 @@ void Display_Menu(UI_Menu* out)
 
 void Destroy_Menu(UI_Menu* Menu)
 {
+  size_t index = Menu->options_length;
   unpost_menu(Menu->Menu);
   free_menu(Menu->Menu);
-  wborder(Menu->Menu_Window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
-  wrefresh(Menu->Menu_Window);
-  delwin(Menu->Menu_Window);
-  size_t index = Menu->options_length;
   while(index --> Menu->options_length)
     free_item(Menu->Menu_Items[index]);
+  Clear_Window(Menu->Menu_Window);
   free(Menu);
 }
 
 size_t Run_Menu(UI_Menu* Menu)
 {
-  int c;
+  int c = -1;
   while((c = wgetch(Menu->Menu_Window)) != KEY_F(1))
   {
     switch(c)
@@ -71,4 +69,5 @@ size_t Run_Menu(UI_Menu* Menu)
     }
     wrefresh(Menu->Menu_Window);
   }
+  return c;
 }

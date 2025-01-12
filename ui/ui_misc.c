@@ -41,6 +41,30 @@ void Clear_Area(int x, int y, int rows, int cols)
   }
 }
 
+void Clear_Area_In_Window(WINDOW* win, int rows, int cols)
+{
+	int x = 0;
+	int y = 0;
+  while(x < rows)
+  {
+		mvwhline(win,x,y,' ', cols);
+    x++;
+  }
+}
+
+
+void Clear_Window(WINDOW* win)
+{
+	int start_x, start_y,rows,cols;
+	getbegyx(win,start_x,start_y);
+	getmaxyx(win,rows,cols);
+	Clear_Area_In_Window(win,rows,cols);
+	wrefresh(win);
+	delwin(win);
+	Clear_Area(start_x,start_y,rows,cols);
+	refresh();
+}
+
 void Move_Window_To_Center(WINDOW* win)
 {
   int x,y,x_fin,y_fin,rows,cols,start_x,start_y;
