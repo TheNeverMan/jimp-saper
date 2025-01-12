@@ -1,18 +1,15 @@
 #include "ui_form.h"
 
-UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char* Form_Title, size_t descriptions_length, size_t window_cols, size_t window_rows)
+UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char* Form_Title, size_t descriptions_length)
 {
-
   /* space for field descs*/
-  size_t window_cols_offset = 35;
+  size_t window_cols_offset = strlen(Form_Title) + 2;
   UI_Form* out = malloc(sizeof(UI_Form));
   size_t index = 0;
   int x,y;
   int label_margin = 0;
   out->Field_Descriptions = Field_Descriptions;
   out->Form_Title = Form_Title;
-  out->window_cols = window_cols;
-  out->window_rows = window_rows;
   out->Approved_Chars = Approved_Chars;
   out->descriptions_length = descriptions_length;
   out->Form_Fields = (FIELD**)calloc(descriptions_length+1, sizeof(FIELD*));
@@ -33,10 +30,11 @@ UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char*
   out->window_cols += window_cols_offset;
   out->window_rows = descriptions_length*2+5;
   out->Form_Window = newwin(out->window_rows,out->window_cols,0,0);
-  mvwprintw(out->Form_Window,1,2,"%s",out->Form_Title);
   set_form_win(out->Form, out->Form_Window);
-  /* send help please */
   set_form_sub(out->Form, derwin(out->Form_Window,out->window_rows-4,out->window_cols-label_margin-1,2,label_margin));
+  int title_pos = (getmaxx(out->Form_Window)-strlen(out->Form_Title))/2;
+  mvwprintw(out->Form_Window,1,title_pos,"%s",out->Form_Title);
+  /* send help please */
   for(index = 0; index <  out->descriptions_length; ++index)
     mvwprintw(out->Form_Window,index*2+4,2,"%s",out->Field_Descriptions[index]);
   return out;
@@ -47,9 +45,8 @@ void Display_Form(UI_Form* Form)
   keypad(Form->Form_Window, TRUE);
   box(Form->Form_Window,0,0);
   post_form(Form->Form);
-  wrefresh(Form->Form_Window);
+  Print_Horizontal_Bar_In_Window(Form->Form_Window,2);
   Move_Window_To_Center(Form->Form_Window);
-  refresh();
   curs_set(TRUE);
 }
 

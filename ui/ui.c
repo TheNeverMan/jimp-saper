@@ -128,7 +128,7 @@ Map_Properties Show_Custom_Size_Dialog(bool second_time)
   else
     Form_Title = "Invalid Values!";
   Print_Help_Bar("Use Cursor Keys to move up and down, Enter confirms input, Space starts game");
-  Custom_Size_Form = Create_Form(Field_Descriptions,INPUT_NUM,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
+  Custom_Size_Form = Create_Form(Field_Descriptions,INPUT_NUM,Form_Title,ARRAY_SIZE(Field_Descriptions));
   Display_Form(Custom_Size_Form);
   Menu_Out = Run_Form(Custom_Size_Form);
   Destroy_Form(Custom_Size_Form);

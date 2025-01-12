@@ -93,6 +93,16 @@ void Print_Help_Bar(char* text)
 	size_t size_x, size_y;
 	getmaxyx(stdscr,size_x,size_y);
 	mvhline(size_x-1,0,' ',size_y);
+	attron(A_DIM);
 	mvprintw(size_x-1,0,"%s",text);
+	attroff(A_DIM);
 	refresh();
+}
+
+void Print_Horizontal_Bar_In_Window(WINDOW* win, size_t row)
+{
+	mvwaddch(win,row,0,ACS_LTEE);
+	mvwhline(win,row,1,ACS_HLINE,getmaxx(win)-2);
+	mvwaddch(win,row,getmaxx(win)-1, ACS_RTEE);
+	wrefresh(win);
 }

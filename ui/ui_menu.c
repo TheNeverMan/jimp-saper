@@ -31,10 +31,7 @@ void Display_Menu(UI_Menu* out)
   set_menu_grey(out->Menu, COLOR_PAIR(DISABLED_TEXT_COLOR) | A_BOLD | A_UNDERLINE);
   box(out->Menu_Window,0,0);
   Print_In_The_Middle(out->Menu_Window,1,0,out->window_cols,out->Menu_Title,STANDARD_TEXT_COLOR);
-  mvwaddch(out->Menu_Window, 2, 0, ACS_LTEE);
-  mvwhline(out->Menu_Window,2,1,ACS_HLINE,out->window_cols-2);
-  mvwaddch(out->Menu_Window, 2, out->window_cols-1, ACS_RTEE);
-
+  Print_Horizontal_Bar_In_Window(out->Menu_Window,2);
   refresh();
   post_menu(out->Menu);
   wrefresh(out->Menu_Window);

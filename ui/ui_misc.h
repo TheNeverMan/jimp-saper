@@ -17,3 +17,4 @@ size_t Get_Longest_String_Length(char** Array, size_t array_size);
 void Move_Window_To_Center(WINDOW* win);
 void Clear_Window(WINDOW* win);
 void Print_Help_Bar(char* text);
+void Print_Horizontal_Bar_In_Window(WINDOW* win, size_t row);
