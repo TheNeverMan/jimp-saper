@@ -87,3 +87,12 @@ size_t Get_Longest_String_Length(char** Array, size_t array_size)
       out = strlen(Array[array_size]);
   return out;
 }
+
+void Print_Help_Bar(char* text)
+{
+	size_t size_x, size_y;
+	getmaxyx(stdscr,size_x,size_y);
+	mvhline(size_x-1,0,' ',size_y);
+	mvprintw(size_x-1,0,"%s",text);
+	refresh();
+}

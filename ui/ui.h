@@ -11,6 +11,8 @@
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
+extern char* logo[];
+
 typedef struct
 {
   size_t rows;

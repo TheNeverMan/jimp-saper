@@ -1,5 +1,15 @@
 #include "ui.h"
 
+char* logo[] = {
+  "        __  __ _                                                   ",
+  "__/\\__ |  \\/  (_)_ __   ___  _____      _____  ___ _ __   ___ _ __ ",
+  "\\    / | |\\/| | | '_ \\ / _ \\/ __\\ \\ /\\ / / _ \\/ _ \\ '_ \\ / _ \\ '__|",
+  "/_  _\\ | |  | | | | | |  __/\\__  \\ V  V /  __/  __/ |_) |  __/ |   ",
+  "  \\/   |_|  |_|_|_| |_|\\___||___/ \\_/\\_/ \\___|\\___| .__/ \\___|_|   ",
+  "                                                  |_|            ",
+  (char*)NULL
+};
+
 void Init_UI()
 {
   initscr();
@@ -26,6 +36,28 @@ void Uninit_UI()
 
 }
 
+void Display_Logo(bool show)
+{
+  size_t logo_length = strlen(logo[1]);
+  size_t size_x, size_y;
+  size_t col_beg = 0;
+  char* tmp = logo[0];
+  size_t index = 0;
+  getmaxyx(stdscr,size_x,size_y);
+  col_beg = size_y/2 - logo_length/2;
+  attron(A_BOLD | COLOR_PAIR(SELECTED_TEXT_COLOR));
+  while(tmp)
+  {
+    if(show)
+      mvprintw(index+1,col_beg,"%s",tmp);
+    else
+      mvhline(index+1,col_beg,' ',logo_length);
+    tmp = logo[++index];
+  }
+  attroff(A_BOLD | COLOR_PAIR(SELECTED_TEXT_COLOR));
+  refresh();
+}
+
 void Show_Highscores()
 {
   char* Menu_Options[] = {
@@ -50,6 +82,7 @@ void Show_Highscores()
   UI_Menu* Highscore_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,12);
   /* make highscores unselectable */
   int index = ARRAY_SIZE(Menu_Options) - 2;
+  Print_Help_Bar("Use Cursor Keys to move up and down and Enter to confirm selection");
   while(index --> 0)
     item_opts_off(Highscore_Menu->Menu_Items[index],O_SELECTABLE);
   Display_Menu(Highscore_Menu);
@@ -91,9 +124,10 @@ Map_Properties Show_Custom_Size_Dialog(bool second_time)
   char** Menu_Out = NULL;
   UI_Form* Custom_Size_Form;
   if(!second_time)
-    Form_Title = "Enter Game Properties (Space accepts)";
+    Form_Title = "Enter Game Properties";
   else
     Form_Title = "Invalid Values!";
+  Print_Help_Bar("Use Cursor Keys to move up and down, Enter confirms input, Space starts game");
   Custom_Size_Form = Create_Form(Field_Descriptions,INPUT_NUM,Form_Title,ARRAY_SIZE(Field_Descriptions),99,99);
   Display_Form(Custom_Size_Form);
   Menu_Out = Run_Form(Custom_Size_Form);
@@ -141,6 +175,7 @@ void Show_Game_Creation_Dialog()
   UI_Menu* Game_Creation_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,12);
   Map_Properties Created_Map_Properties;
   int output = 0;
+  Print_Help_Bar("Use Cursor Keys to move up and down and Enter to confirm selection");
   Display_Menu(Game_Creation_Menu);
   output = Run_Menu(Game_Creation_Menu);
   Destroy_Menu(Game_Creation_Menu);
@@ -173,7 +208,7 @@ void Show_Game_Creation_Dialog()
       }
       break;
     default:
-      /* exit */
+      return;
       break;
   }
   Show_Map(Created_Map_Properties);
@@ -198,13 +233,17 @@ void Show_Main_Menu()
   char Menu_Title[] = "Minesweeper - Leopold Kucinski & Kajetan Wojcik";
   bool loop = TRUE;
   Init_UI();
+  Print_Help_Bar("Use Cursor Keys to move up and down and Enter to confirm selection");
   while(loop)
   {
     UI_Menu* Main_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,10);
     size_t selected_option = 0;
     Display_Menu(Main_Menu);
+    Display_Logo(TRUE);
+    refresh();
     selected_option = Run_Menu(Main_Menu);
     Destroy_Menu(Main_Menu);
+    Display_Logo(FALSE);
     switch(selected_option)
     {
       /* New Game */
