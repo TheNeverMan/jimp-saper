@@ -5,7 +5,7 @@ FILES = backend/board.c backend/game.c backend/input.c backend/score.c ui/ui.c u
 LIBS	= -lcurses -lmenu -lform
 all: $(FILES) main.c
 	$(CC) $(FLAGS) $(TEST_FLAGS) -o saper main.c $(FILES) $(LIBS)
-test: $(FILES) test/test.c
+test-saper: $(FILES) test/test.c
 	$(CC) $(FLAGS) $(TEST_FLAGS) -o saper-test test/test.c $(FILES) $(LIBS)
 clean:
 	rm -f saper-test

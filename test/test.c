@@ -4,7 +4,7 @@
 #include "../backend/board.h"
 #include "../backend/input.h"
 
-void testReadFiles(const char* mapFile, const char* inputFile) 
+void testReadFiles(const char* mapFile, const char* inputFile)
 {
   File file = readFiles(inputFile, mapFile);
   if(file.inputCount == -1) return;
