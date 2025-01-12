@@ -5,6 +5,7 @@
 
 #include "input.h"
 #include "board.h"
+#include "game.h"
 
 File readFiles(const char* inputFile, const char* mapFile)
 {
@@ -125,68 +126,6 @@ int readMap(File* file, const char* fileName)
     }
 
     fclose(fileStream);
-    return 0;
-}
-
-int changeState(Board* board, int row, int col, Action action)
-{
-    if(row < 0 || row >= board->size.rows || col < 0 || col >= board->size.columns)
-    {
-        printf("Invalid row or column\n");
-        return 1;
-    }
-    
-    SquareState* square = &board->tab[row][col];
-
-    switch(action)
-    {
-        case REVEAL:
-        if(square->revealState == 0)
-        {
-            square->revealState = 1;
-            if(square->mineState == 1)
-            {
-                /* GAME OVER :[ */
-            }
-            else
-            {
-                /* show revealed square */
-            }
-        }
-        else
-        {
-            /* handle already revealed */
-        }
-        break;
-
-        case FLAG:
-        if(square->flagState == 0)
-        {
-            square->flagState = 1;
-            /* flag square */
-        }
-        else
-        {
-            /* handle already flagged */
-        }
-        break;
-
-        case UNFLAG:
-        if(square->flagState == 1)
-        {
-            square->flagState = 0;
-            /* unflag square */
-        }
-        else
-        {
-            /* handle already unflagged */
-        }
-        break;
-
-        default:
-        printf("Invalid action!\n");
-        break;
-    }
     return 0;
 }
 
