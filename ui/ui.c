@@ -127,7 +127,7 @@ Map_Properties Show_Custom_Size_Dialog(bool second_time)
     Form_Title = "Enter Game Properties";
   else
     Form_Title = "Invalid Values!";
-  Print_Help_Bar("Use Cursor Keys to move up and down, Enter confirms input, Space starts game");
+  Print_Help_Bar("Use Cursor Keys to move up and down, Enter confirms input, press Enter in Confirm field to start game");
   Custom_Size_Form = Create_Form(Field_Descriptions,INPUT_NUM,Form_Title,ARRAY_SIZE(Field_Descriptions));
   Display_Form(Custom_Size_Form);
   Menu_Out = Run_Form(Custom_Size_Form);
@@ -149,6 +149,7 @@ void Show_Map(Map_Properties Properties)
   mvwprintw(Main_Game_Window,1,1,"Map %lux%lu (%lu mines left)",Properties.rows,Properties.cols,Properties.mines);
   Move_Window_To_Center(Main_Game_Window);
   wrefresh(Main_Game_Window);
+  Display_Logo(TRUE);
   getch();
   Clear_Window(Main_Game_Window);
 }

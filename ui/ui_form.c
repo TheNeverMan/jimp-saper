@@ -3,7 +3,6 @@
 UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char* Form_Title, size_t descriptions_length)
 {
   /* space for field descs*/
-  size_t window_cols_offset = strlen(Form_Title) + 2;
   UI_Form* out = malloc(sizeof(UI_Form));
   size_t index = 0;
   int x,y;
@@ -18,7 +17,7 @@ UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char*
   {
     if(!out->Form_Fields)
       break;
-    out->Form_Fields[index] = new_field(1,10,index*2+2,window_cols_offset,0,0);
+    out->Form_Fields[index] = new_field(1,10,index*2+2, label_margin + 2,0,0);
     set_field_fore(out->Form_Fields[index], COLOR_PAIR(HIGHLITED_TEXT_COLOR) | A_BOLD);
     set_field_back(out->Form_Fields[index], COLOR_PAIR(ENTERED_TEXT_COLOR) | A_DIM);
   }
@@ -27,7 +26,7 @@ UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char*
   scale_form(out->Form, &x, &y);
   out->window_cols = x;
   out->window_cols = y;
-  out->window_cols += window_cols_offset;
+  out->window_cols += strlen(Form_Title) + 2;
   out->window_rows = descriptions_length*2+5;
   out->Form_Window = newwin(out->window_rows,out->window_cols,0,0);
   set_form_win(out->Form, out->Form_Window);
@@ -48,6 +47,18 @@ void Display_Form(UI_Form* Form)
   Print_Horizontal_Bar_In_Window(Form->Form_Window,2);
   Move_Window_To_Center(Form->Form_Window);
   curs_set(TRUE);
+  form_driver(Form->Form,REQ_FIRST_FIELD);
+  form_driver(Form->Form,REQ_BEG_FIELD);
+}
+
+char** Create_Ouput_Data(UI_Form* Form)
+{
+  char** out;
+  size_t index = Form->descriptions_length;
+  out = malloc(sizeof(char*)*Form->descriptions_length);
+  while(index --> 0)
+    out[index] = field_buffer(Form->Form_Fields[index],0);
+  return out;
 }
 
 char** Run_Form(UI_Form* Form)
@@ -58,6 +69,8 @@ char** Run_Form(UI_Form* Form)
 	{	switch(ch)
 		{
       case 10: /* new line */
+          if(field_index(current_field(Form->Form)) == (Form->descriptions_length-1))
+            return Create_Ouput_Data(Form);
       case KEY_DOWN:
 				/* Go to next field */
         form_driver(Form->Form, REQ_NEXT_FIELD);
@@ -76,11 +89,7 @@ char** Run_Form(UI_Form* Form)
       case 32: /* space key */
         /* end form*/
         {
-          size_t index = Form->descriptions_length;
-          out = malloc(sizeof(char*)*Form->descriptions_length);
-          while(index --> 0)
-            out[index] = field_buffer(Form->Form_Fields[index],0);
-          return out;
+          return Create_Ouput_Data(Form);
           break;
         }
       case KEY_BACKSPACE:
@@ -93,7 +102,7 @@ char** Run_Form(UI_Form* Form)
 				break;
 		}
 	}
-  return out;
+  return NULL;
 }
 
 bool Is_Character_Approved(UI_Form* Form, int ch)
