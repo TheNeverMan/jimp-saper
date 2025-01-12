@@ -86,12 +86,6 @@ char** Run_Form(UI_Form* Form)
       case 27: /* ESC key */
         return NULL;
         break;
-      case 32: /* space key */
-        /* end form*/
-        {
-          return Create_Ouput_Data(Form);
-          break;
-        }
       case KEY_BACKSPACE:
         form_driver(Form->Form, REQ_DEL_PREV);
 			default:
