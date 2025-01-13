@@ -36,28 +36,6 @@ void Uninit_UI()
 
 }
 
-void Display_Logo(bool show)
-{
-  size_t logo_length = strlen(logo[1]);
-  size_t size_x, size_y;
-  size_t col_beg = 0;
-  char* tmp = logo[0];
-  size_t index = 0;
-  getmaxyx(stdscr,size_x,size_y);
-  col_beg = size_y/2 - logo_length/2;
-  attron(A_BOLD | COLOR_PAIR(SELECTED_TEXT_COLOR));
-  while(tmp)
-  {
-    if(show)
-      mvprintw(index+1,col_beg,"%s",tmp);
-    else
-      mvhline(index+1,col_beg,' ',logo_length);
-    tmp = logo[++index];
-  }
-  attroff(A_BOLD | COLOR_PAIR(SELECTED_TEXT_COLOR));
-  refresh();
-}
-
 void Show_Highscores()
 {
   char* Menu_Options[] = {
@@ -98,6 +76,7 @@ Map_Properties Convert_Char_To_Map_Properties(char** tab)
   out.rows = atoi(tab[0]);
   out.cols = atoi(tab[1]);
   out.mines = atoi(tab[2]);
+  free(tab);
   return out;
 }
 
@@ -135,24 +114,7 @@ Map_Properties Show_Custom_Size_Dialog(bool second_time)
   return  Convert_Char_To_Map_Properties(Menu_Out);
 }
 
-void Show_Map(Map_Properties Properties)
-{
-  size_t size_x = 7+3;
-  size_t size_y = 25+2;
-  WINDOW* Main_Game_Window = NULL;
-  if(size_x < (Properties.rows+3))
-    size_x = Properties.rows;
-  if(size_y < (Properties.cols+2))
-    size_y = Properties.cols;
-  Main_Game_Window = newwin(size_x,size_y,0,0);
-  box(Main_Game_Window,0,0);
-  mvwprintw(Main_Game_Window,1,1,"Map %lux%lu (%lu mines left)",Properties.rows,Properties.cols,Properties.mines);
-  Move_Window_To_Center(Main_Game_Window);
-  wrefresh(Main_Game_Window);
-  Display_Logo(TRUE);
-  getch();
-  Clear_Window(Main_Game_Window);
-}
+
 
 void Show_Game_Creation_Dialog()
 {
@@ -176,6 +138,7 @@ void Show_Game_Creation_Dialog()
   UI_Menu* Game_Creation_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,12);
   Map_Properties Created_Map_Properties;
   int output = 0;
+  Created_Map_Properties.points = 0;
   Print_Help_Bar("Use Cursor Keys to move up and down and Enter to confirm selection");
   Display_Menu(Game_Creation_Menu);
   output = Run_Menu(Game_Creation_Menu);
@@ -212,7 +175,7 @@ void Show_Game_Creation_Dialog()
       return;
       break;
   }
-  Show_Map(Created_Map_Properties);
+  Show_Main_Game(Created_Map_Properties);
 }
 
 void Show_Main_Menu()
@@ -221,14 +184,12 @@ void Show_Main_Menu()
     "New Game",
     "Highscores",
     "Exit",
-    "test",
     (char*)NULL
   };
   char* Menu_Descriptions[] = {
     " - Start new game",
     " - Show top 5 scores",
     " - Leave program :(",
-    " - test test",
     (char*)NULL
   };
   char Menu_Title[] = "Minesweeper - Leopold Kucinski & Kajetan Wojcik";

@@ -106,3 +106,25 @@ void Print_Horizontal_Bar_In_Window(WINDOW* win, size_t row)
 	mvwaddch(win,row,getmaxx(win)-1, ACS_RTEE);
 	wrefresh(win);
 }
+
+void Display_Logo(bool show)
+{
+  size_t logo_length = strlen(logo[1]);
+  size_t size_x, size_y;
+  size_t col_beg = 0;
+  char* tmp = logo[0];
+  size_t index = 0;
+  getmaxyx(stdscr,size_x,size_y);
+  col_beg = size_y/2 - logo_length/2;
+  attron(A_BOLD | COLOR_PAIR(SELECTED_TEXT_COLOR));
+  while(tmp)
+  {
+    if(show)
+      mvprintw(index+1,col_beg,"%s",tmp);
+    else
+      mvhline(index+1,col_beg,' ',logo_length);
+    tmp = logo[++index];
+  }
+  attroff(A_BOLD | COLOR_PAIR(SELECTED_TEXT_COLOR));
+  refresh();
+}

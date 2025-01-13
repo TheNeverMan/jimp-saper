@@ -8,20 +8,13 @@
 #include "colors.h"
 #include "ui_menu.h"
 #include "ui_form.h"
+#include "ui_game.h"
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
-extern char* logo[];
 
-typedef struct
-{
-  size_t rows;
-  size_t cols;
-  size_t mines;
-} Map_Properties;
 
 void Show_Main_Menu();
 void Show_Highscores();
 void Show_Game_Creation_Dialog();
 Map_Properties Show_Custom_Size_Dialog(bool second_time);
-void Show_Map(Map_Properties Properties);
