@@ -3,8 +3,8 @@
 
 typedef struct size
 {
-    int columns;
     int rows;
+    int columns;
 } Size;
 
 typedef struct squareState
