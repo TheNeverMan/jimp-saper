@@ -124,7 +124,7 @@ void Game_Loop(Map_Properties Properties, Game_Windows Windows)
 void Show_Main_Game(Map_Properties Properties)
 {
   Game_Windows Windows = Create_Game_Window(Properties);
-  Properties.Game_Board = generateBoard(Properties.rows,Properties.cols,Properties.mines);
+  /*Properties.Game_Board = generateBoard(Properties.rows,Properties.cols,Properties.mines);*/
   wmove(Windows.Board_Window,0,0);
   wrefresh(Windows.Board_Window);
   Game_Loop(Properties,Windows);
