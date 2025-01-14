@@ -23,7 +23,7 @@ typedef struct
   Input_Type Approved_Chars;
 } UI_Form;
 
-UI_Form* Create_Form(char** Field_Descriptions,Input_Type Approved_Chars, char* Form_Title, size_t descriptions_length);
+UI_Form* Create_Form(char** Field_Descriptions,Input_Type Approved_Chars, char* Form_Title, size_t descriptions_length, int title_attrs);
 char** Run_Form(UI_Form* Form);
 void Destroy_Form(UI_Form* Form);
 void Display_Form(UI_Form* Form);

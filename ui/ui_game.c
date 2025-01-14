@@ -37,11 +37,34 @@ Game_Windows Create_Game_Window(Map_Properties Properties)
   return out;
 }
 
+void Refresh_Map(Map_Properties Properties, Game_Windows Windows)
+{
+  size_t index_x = Properties.rows;
+  size_t index_y = Properties.cols;
+  size_t orig_y = getcury(Windows.Board_Window);
+  size_t orig_x = getcurx(Windows.Board_Window);
+  werase(Windows.Board_Window);
+  wmove(Windows.Board_Window,0,0);
+  while(index_y --> 0)
+  {
+    while(index_x --> 0)
+    {
+
+    }
+    index_x = Properties.rows;
+    wmove(Windows.Board_Window,index_y-1,index_x);
+  }
+  wmove(Windows.Board_Window,orig_y,orig_x);
+  refresh();
+}
+
 void Game_Loop(Map_Properties Properties, Game_Windows Windows)
 {
   int ch = -1;
   while((ch = wgetch(Windows.Board_Window)) != (KEY_F(1)))
-  {	switch(ch)
+  {
+    Refresh_Map(Properties,Windows);
+  	switch(ch)
     {
       case ENTER:
         {
@@ -74,6 +97,7 @@ void Game_Loop(Map_Properties Properties, Game_Windows Windows)
 void Show_Main_Game(Map_Properties Properties)
 {
   Game_Windows Windows = Create_Game_Window(Properties);
+  Properties.Game_Board = generateBoard(Properties.rows,Properties.cols,Properties.mines);
   wmove(Windows.Board_Window,0,0);
   wrefresh(Windows.Board_Window);
   Game_Loop(Properties,Windows);

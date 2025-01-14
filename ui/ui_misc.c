@@ -112,7 +112,7 @@ void Display_Logo(bool show)
   size_t logo_length = strlen(logo[1]);
   size_t size_x, size_y;
   size_t col_beg = 0;
-  char* tmp = logo[0];
+	const char* tmp = logo[0];
   size_t index = 0;
   getmaxyx(stdscr,size_x,size_y);
   col_beg = size_y/2 - logo_length/2;

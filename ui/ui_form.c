@@ -1,6 +1,6 @@
 #include "ui_form.h"
 
-UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char* Form_Title, size_t descriptions_length)
+UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char* Form_Title, size_t descriptions_length, int title_attrs)
 {
   /* space for field descs*/
   UI_Form* out = malloc(sizeof(UI_Form));
@@ -32,7 +32,9 @@ UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char*
   set_form_win(out->Form, out->Form_Window);
   set_form_sub(out->Form, derwin(out->Form_Window,out->window_rows-4,out->window_cols-label_margin-1,2,label_margin));
   int title_pos = (getmaxx(out->Form_Window)-strlen(out->Form_Title))/2;
+  wattron(out->Form_Window,title_attrs);
   mvwprintw(out->Form_Window,1,title_pos,"%s",out->Form_Title);
+  wattroff(out->Form_Window,title_attrs);
   /* send help please */
   for(index = 0; index <  out->descriptions_length; ++index)
     mvwprintw(out->Form_Window,index*2+4,2,"%s",out->Field_Descriptions[index]);

@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "colors.h"
+#include "../backend/board.h"
 
 #define ENTER 10
 
@@ -19,9 +20,10 @@ typedef struct
   size_t cols;
   size_t mines;
   size_t points;
+  Board Game_Board;
 } Map_Properties;
 
-extern char* logo[];
+extern const char* logo[];
 
 
 void Print_In_The_Middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color);
