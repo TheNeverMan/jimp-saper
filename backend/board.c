@@ -94,23 +94,28 @@ void revealCell(Board* board, int row, int column)
         return;
     }
 
-    if (board->tab[row][column].revealState == 1) 
+    if (board->tab[row][column].revealState == 1 || board->tab[row][column].flagState == 1) 
     {
         return;
     }
 
     board->tab[row][column].revealState = 1;
 
-    if(board->tab[row][column].minesNear == 0)
+    if (board->tab[row][column].minesNear > 0) 
     {
-        for(int x = -1; x <= 1; x++)
+        return;
+    }
+
+    printf("Revealing cell at (%d, %d)\n", row, column);
+
+
+    for (int x = -1; x <= 1; x++)
+    {
+        for (int y = -1; y <= 1; y++)
         {
-            for(int y = -1; y <= 1; y++)
+            if (x != 0 || y != 0)
             {
-                if(x != 0 || y != 0)
-                {
-                    revealCell(board, row + x, column + y);
-                }
+                revealCell(board, row + x, column + y);
             }
         }
     }

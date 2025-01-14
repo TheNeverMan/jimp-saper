@@ -2,7 +2,6 @@
 #define INPUT_H
 
 #include "board.h"
-#include "game.h"
 
 typedef struct input
 {
