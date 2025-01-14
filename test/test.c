@@ -43,7 +43,8 @@ void testReadFiles(const char* mapFile, const char* inputFile)
 
 void testBoard() 
 {
-  Board board = generateBoard(9, 9, 10);
+  Board board;
+  generateBoard(&board, 9, 9, 10);
 
   int mineCount = 0;
   for (int i = 0; i < board.size.rows; i++) 

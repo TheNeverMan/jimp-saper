@@ -3,16 +3,17 @@
 #include <time.h>
 
 #include "board.h"
+#include "game.h"
 
-Board generateBoard(int rows, int cols, int count)
+void generateBoard(Board* board, int rows, int cols, int count)
 {
-    Board board = initBoard(rows, cols);
-    board.mineCount = count;
+    *board = initBoard(rows, cols);
+    board->mineCount = count;
 
-    placeMines(&board);
-    calculateMines(&board);
+    placeMines(board, board->firstMoveRow, board->firstMoveCol);
+    calculateMines(board);
 
-    return board;
+    return;
 }
 
 Board initBoard(int rows, int cols)
@@ -30,7 +31,7 @@ Board initBoard(int rows, int cols)
     return board;
 }
 
-void placeMines(Board* board)
+void placeMines(Board* board, int firstRow, int firstCol)
 {
     int placed = 0;
     srand(time(NULL));
@@ -40,11 +41,13 @@ void placeMines(Board* board)
         int row = rand() % board->size.rows;
         int col = rand() % board->size.columns;
 
-        if (board->tab[row][col].mineState == 0) 
+        if((row == firstRow && col == firstCol) || board->tab[row][col].mineState == 1)
         {
-            board->tab[row][col].mineState = 1; 
-            placed++;
+            continue;
         }
+
+        board->tab[row][col].mineState = 1; 
+        placed++;
     }
 }
 
@@ -82,4 +85,33 @@ void cleanBoard(Board* board)
         free(board->tab[i]);
     }
     free(board->tab);
+}
+
+void revealCell(Board* board, int row, int column)
+{
+    if (row < 0 || row >= board->size.rows || column < 0 || column >= board->size.columns) 
+    {
+        return;
+    }
+
+    if (board->tab[row][column].revealState == 1) 
+    {
+        return;
+    }
+
+    board->tab[row][column].revealState = 1;
+
+    if(board->tab[row][column].minesNear == 0)
+    {
+        for(int x = -1; x <= 1; x++)
+        {
+            for(int y = -1; y <= 1; y++)
+            {
+                if(x != 0 || y != 0)
+                {
+                    revealCell(board, row + x, column + y);
+                }
+            }
+        }
+    }
 }
