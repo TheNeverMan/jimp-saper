@@ -48,7 +48,15 @@ int setRevealState(Game* game, int row, int column, int state)
         return -1;
     }
 
-    game->board.tab[row][column].revealState = state;
+    if(state == 1)
+    {
+        revealCell(&game->board, row, column);
+    }
+    else
+    {
+        game->board.tab[row][column].revealState = state;
+    }
+
     return 0;
 }
 
@@ -105,10 +113,54 @@ int getFlagState(const Game* game, int row, int column)
     return game->board.tab[row][column].flagState;
 }
 
+void setDifficulty(Game* game, int difficulty)
+{
+    switch (difficulty)
+    {
+    case 0:
+        game->difficulty = 1;
+        game->board.size.columns = 9;
+        game->board.size.rows = 9;
+        game->board.mineCount = 10;
+        break;
 
+    case 1:
+        game->difficulty = 2;
+        game->board.size.columns = 16;
+        game->board.size.rows = 16;
+        game->board.mineCount = 40;
+        break;
 
+    case 2:
+        game->difficulty = 3;
+        game->board.size.columns = 30;
+        game->board.size.rows = 16;
+        game->board.mineCount = 99;
+        break;
 
+    case 3:
+        game->difficulty = 4;
+        game->board.size = getSize(game);
+        game->board.mineCount = getMineCount(game);
+        break;
+    
+    default:
+        game->difficulty = 1;
+        game->board.size.columns = 9;
+        game->board.size.rows = 9;
+        game->board.mineCount = 10;
+        break;
+    }
 
+    generateBoard(&game->board, game->board.size.rows, game->board.size.columns, game->board.mineCount);
+}
 
+int getScore(const Game* game)
+{
+    return game->score.points;
+}
 
-
+int getMinesNear(const Game* game, int row, int column)
+{
+    return game->board.tab[row][column].minesNear;
+}
