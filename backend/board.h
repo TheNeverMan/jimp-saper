@@ -20,13 +20,17 @@ typedef struct board
     SquareState** tab;
     Size size;
     int mineCount;
+    int firstMoveRow;
+    int firstMoveCol;
 } Board;
 
-Board generateBoard(int rows, int cols, int count);
 Board initBoard(int rows, int cols);
-void placeMines(Board* board);
+void placeMines(Board* board, int firstRow, int firstCol);
 void calculateMines(Board* board);
+void revealCell(Board* board, int row, int column);
 void testBoard();
 void cleanBoard(Board* board);
+void generateBoard(Board* board, int rows, int cols, int count);
+
 
 #endif
