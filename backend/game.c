@@ -17,7 +17,7 @@ void gameLoopFile(char* inputFile, char* mapFile)
 
     while(game.ended == 0)
     {   
-        printf("i: %d\n", i);
+        //printf("i: %d\n", i);
         if(i == file.inputCount)
         {
             game.ended = 1;
@@ -77,7 +77,7 @@ void gameLoopFile(char* inputFile, char* mapFile)
 
         game.score.points = cells;
 
-        if(cells == (game.board.size.columns * game.board.size.rows) - game.board.mineCount)
+        if(game.score.points == ((game.board.size.columns * game.board.size.rows) - file.mineCount))
         {
             game.ended = 1;
             won = 0;
@@ -86,8 +86,10 @@ void gameLoopFile(char* inputFile, char* mapFile)
 
         i++;
     }
-    won = 1;
     printf("Moves: %d Points: %d Won: %d\n", moves, game.score.points, won);
+
+    Score score = {NULL, moves, game.score.points, won, "KW\0"};
+    saveScore(&score, "test.txt");
 }
 
 void initGame(Game* game)

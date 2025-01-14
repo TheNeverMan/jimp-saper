@@ -106,9 +106,6 @@ void revealCell(Board* board, int row, int column)
         return;
     }
 
-    printf("Revealing cell at (%d, %d)\n", row, column);
-
-
     for (int x = -1; x <= 1; x++)
     {
         for (int y = -1; y <= 1; y++)
