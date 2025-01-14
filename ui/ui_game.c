@@ -49,10 +49,21 @@ void Refresh_Map(Map_Properties Properties, Game_Windows Windows)
   {
     while(index_x --> 0)
     {
+      int tile_attrs = 0;
+      char tile_char = 0;
+      if(getRevealState(&Properties.Current_Game,index_y,index_x))
+      {
 
+      }
+      else
+      {
+
+      }
+      wattron(Windows.Board_Window,tile_attrs);
+      mvwaddch(Windows.Board_Window,index_y,index_x,tile_char);
+      wattroff(Windows.Board_Window,tile_attrs);
     }
     index_x = Properties.rows;
-    wmove(Windows.Board_Window,index_y-1,index_x);
   }
   wmove(Windows.Board_Window,orig_y,orig_x);
   refresh();
@@ -63,7 +74,7 @@ void Game_Loop(Map_Properties Properties, Game_Windows Windows)
   int ch = -1;
   while((ch = wgetch(Windows.Board_Window)) != (KEY_F(1)))
   {
-    Refresh_Map(Properties,Windows);
+    //Refresh_Map(Properties,Windows);
   	switch(ch)
     {
       case ENTER:
@@ -89,6 +100,22 @@ void Game_Loop(Map_Properties Properties, Game_Windows Windows)
         {
           wmove(Windows.Board_Window,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)+1);
           break;
+        }
+      case 'c':
+        {
+          char* Field_Descriptions[] = {
+            "Enter command:",
+            "Confirm",
+            (char*)NULL,
+          };
+          UI_Form* Command_Form = Create_Form(Field_Descriptions,INPUT_ALPHANUM,"Enter command",2,A_BOLD);
+          Display_Form(Command_Form);
+          char** Output = Run_Form(Command_Form);
+          Destroy_Form(Command_Form);
+          curs_set(TRUE);
+          refresh();
+          wrefresh(Windows.Board_Window);
+          wrefresh(Windows.Main_Game_Window);
         }
     }
   }

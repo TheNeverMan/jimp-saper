@@ -23,5 +23,5 @@ extern const int TILE_2;
 extern const int TILE_3;
 extern const int TILE_4;
 extern const int TILE_OTHER;
-extern const int FLAG;
-extern const int MINE;
+extern const int FLAG_TILE;
+extern const int MINE_TILE;

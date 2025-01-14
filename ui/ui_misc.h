@@ -5,6 +5,7 @@
 
 #include "colors.h"
 #include "../backend/board.h"
+#include "../backend/game.h"
 
 #define ENTER 10
 
@@ -21,6 +22,7 @@ typedef struct
   size_t mines;
   size_t points;
   Board Game_Board;
+  Game Current_Game;
 } Map_Properties;
 
 extern const char* logo[];

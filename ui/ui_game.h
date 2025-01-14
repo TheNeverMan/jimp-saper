@@ -4,6 +4,8 @@
 
 #include "ui_misc.h"
 #include "colors.h"
+#include "ui_form.h"
+#include "../backend/interface.h"
 
 typedef struct
 {
