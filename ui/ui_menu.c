@@ -51,7 +51,7 @@ void Destroy_Menu(UI_Menu* Menu)
 size_t Run_Menu(UI_Menu* Menu)
 {
   int c = -1;
-  while((c = wgetch(Menu->Menu_Window)) != KEY_F(1))
+  while((c = wgetch(Menu->Menu_Window)) != ESCAPE)
   {
     switch(c)
     {

@@ -33,7 +33,7 @@ Game_Windows Create_Game_Window(Game* Main_Game)
   why is this still a thing */
   out.Board_Window = derwin(out.Main_Game_Window,getSize(Main_Game).rows,getSize(Main_Game).columns,3,1);
   Display_Logo(TRUE);
-  Print_Help_Bar("Use Cursor Keys to navigate on the map, Space to toggle flag, Enter reveals tile. Alternatively C opens command prompt. Escape leaves game.");
+  Print_Help_Bar("Use Cursor Keys to navigate on the map, Space to toggle flag, Enter reveals tile. Alternatively C opens command prompt.");
   Print_Horizontal_Bar_In_Window(out.Main_Game_Window,2);
   curs_set(TRUE);
   keypad(out.Main_Game_Window, TRUE);
@@ -232,7 +232,12 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
 
 void Show_Main_Game(Game* Main_Game)
 {
+<<<<<<< HEAD
+  Game_Windows Windows = Create_Game_Window(Properties);
+  /*Properties.Game_Board = generateBoard(Properties.rows,Properties.cols,Properties.mines);*/
+=======
   Game_Windows Windows = Create_Game_Window(Main_Game);
+>>>>>>> ui
   wmove(Windows.Board_Window,0,0);
   wrefresh(Windows.Board_Window);
   Game_Loop(Main_Game,Windows);

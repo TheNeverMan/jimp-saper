@@ -8,6 +8,7 @@
 #include "../backend/game.h"
 
 #define ENTER 10
+#define ESCAPE 27
 
 typedef enum
 {

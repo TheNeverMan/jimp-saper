@@ -67,7 +67,7 @@ char** Run_Form(UI_Form* Form)
 {
   int ch = -1;
   char** out = NULL;
-  while((ch = wgetch(Form->Form_Window)) != (KEY_F(1)))
+  while((ch = wgetch(Form->Form_Window)) != (ESCAPE))
 	{	switch(ch)
 		{
       case 10: /* new line */

@@ -33,7 +33,7 @@ Game_Windows Create_Game_Window(Game* Main_Game)
   why is this still a thing */
   out.Board_Window = derwin(out.Main_Game_Window,getSize(Main_Game).rows,getSize(Main_Game).columns,3,1);
   Display_Logo(TRUE);
-  Print_Help_Bar("Use Cursor Keys to navigate on the map, Space to toggle flag, Enter reveals tile. Alternatively C opens command prompt. Escape leaves game.");
+  Print_Help_Bar("Use Cursor Keys to navigate on the map, Space to toggle flag, Enter reveals tile. Alternatively C opens command prompt.");
   Print_Horizontal_Bar_In_Window(out.Main_Game_Window,2);
   curs_set(TRUE);
   keypad(out.Main_Game_Window, TRUE);
