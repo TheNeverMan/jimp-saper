@@ -180,6 +180,8 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
         }
       case ' ':
         {
+          if(!was_generated)
+            break;
           if(getRevealState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
             break;
           int cur_state = getFlagState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
