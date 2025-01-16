@@ -21,8 +21,6 @@ typedef struct
   size_t cols;
   size_t mines;
   size_t points;
-  Board Game_Board;
-  Game Current_Game;
 } Map_Properties;
 
 extern const char* logo[];

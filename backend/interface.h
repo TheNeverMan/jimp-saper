@@ -20,7 +20,7 @@ Size getSize(const Game* game); /* Size = int rows, int columns */
 int getMineCount(const Game* game);
 int getRevealState(const Game* game, int row, int column); /* 0 - zakryte, 1 - odkryte */
 int getMineState(const Game* game, int row, int column); /* 0 - brak miny, 1 - mina */
-int getflagState(const Game* game, int row, int column); /* 0 - brak flagi, 1 - flaga */
+int getFlagState(const Game* game, int row, int column); /* 0 - brak flagi, 1 - flaga */
 int getScore(const Game* game);
 int getMinesNear(const Game* game, int row, int column);
 

@@ -9,6 +9,8 @@
 #include "ui_menu.h"
 #include "ui_form.h"
 #include "ui_game.h"
+#include "../backend/interface.h"
+#include "../backend/game.h"
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 

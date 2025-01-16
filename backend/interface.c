@@ -44,7 +44,7 @@ int setRevealState(Game* game, int row, int column, int state)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Setting invalid row or column!\n");
+        printf("Setting invalid row or column! %ix%i\n",row,column);
         return -1;
     }
 
@@ -64,7 +64,7 @@ int getRevealState(const Game* game, int row, int column)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Getting invalid row or column!\n");
+        printf("Getting invalid row or column! %ix%i\n",row,column);
         return -1;
     }
 
@@ -75,7 +75,7 @@ int setMineState(Game* game, int row, int column, int state)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Setting invalid row or column!\n");
+        printf("Setting invalid row or column! %ix%i\n",row,column);
         return -1;
     }
     game->board.tab[row][column].mineState = state;
@@ -86,7 +86,7 @@ int getMineState(const Game* game, int row, int column)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Getting invalid row or column!\n");
+        printf("Getting invalid row or column! %ix%i\n",row,column);
         return -1;
     }
     return game->board.tab[row][column].mineState;
@@ -96,7 +96,7 @@ int setflagState(Game* game, int row, int column, int state)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Setting invalid row or column!\n");
+        printf("Setting invalid row or column! %ix%i\n",row,column);
         return -1;
     }
     game->board.tab[row][column].flagState = state;
@@ -107,7 +107,7 @@ int getFlagState(const Game* game, int row, int column)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Getting invalid row or column!\n");
+        printf("Getting invalid row or column! %ix%i\n",row,column);
         return -1;
     }
     return game->board.tab[row][column].flagState;
@@ -143,7 +143,7 @@ void setDifficulty(Game* game, int difficulty)
         game->board.size = getSize(game);
         game->board.mineCount = getMineCount(game);
         break;
-    
+
     default:
         game->difficulty = 1;
         game->board.size.columns = 9;
