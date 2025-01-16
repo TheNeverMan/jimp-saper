@@ -11,7 +11,7 @@ void setSize(Game* game, int rows, int columns);
 void setMineCount(Game* game, int count);
 int setRevealState(Game* game, int row, int column, int state); /* 0 - zakryte, 1 - odkryte */
 int setMineState(Game* game, int row, int column, int state); /* 0 - brak miny, 1 - mina */
-int setflagState(Game* game, int row, int column, int state); /* 0 - brak flagi, 1 - flaga */
+int setFlagState(Game* game, int row, int column, int state); /* 0 - brak flagi, 1 - flaga */
 void setDifficulty(Game* game, int difficulty); /* 0 - łatwy, 1 - średni, 2 - trudny, 3 - własny, !!!Wygeneruje plansze, dla customowej trudnośći najpierw podaj rozmiar i miny!!!*/
 
 /* Getters */

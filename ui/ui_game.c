@@ -110,6 +110,18 @@ char Get_Tile_Char(Game* Main_Game,int y, int x)
   return out;
 }
 
+void Reveal_Whole_Map(Game* Main_Game)
+{
+  size_t index_y = getSize(Main_Game).rows;
+  size_t index_x = getSize(Main_Game).columns;
+  while(index_y --> 0)
+  {
+    while(index_x --> 0)
+      setRevealState(Main_Game,index_y,index_x,1);
+    index_x = getSize(Main_Game).columns;
+  }
+}
+
 void Refresh_Map(Game* Main_Game, Game_Windows Windows, bool was_generated)
 {
   size_t index_y = getSize(Main_Game).rows;
@@ -128,6 +140,7 @@ void Refresh_Map(Game* Main_Game, Game_Windows Windows, bool was_generated)
       {
         tile_attrs = Get_Tile_Atrs(Main_Game,index_y,index_x);
         tile_char = Get_Tile_Char(Main_Game,index_y,index_x);
+        // tile_char = '0' + getMinesNear(Main_Game,index_y,index_x);
       }
       else
       {
@@ -160,7 +173,17 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
             placeMines(&Main_Game->board,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
             was_generated = TRUE;
           }
-          setRevealState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window),1);
+          // Reveal_Whole_Map(Main_Game);
+          if(!getFlagState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
+            setRevealState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window),1);
+          break;
+        }
+      case ' ':
+        {
+          if(getRevealState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
+            break;
+          int cur_state = getFlagState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
+          setFlagState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window),1-cur_state);
           break;
         }
       case KEY_DOWN:

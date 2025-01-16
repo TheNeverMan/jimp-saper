@@ -92,7 +92,7 @@ int getMineState(const Game* game, int row, int column)
     return game->board.tab[row][column].mineState;
 }
 
-int setflagState(Game* game, int row, int column, int state)
+int setFlagState(Game* game, int row, int column, int state)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
