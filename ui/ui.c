@@ -12,10 +12,10 @@ const char* logo[] = {
 
 const int HIDDEN_TILE = A_DIM | COLOR_PAIR(HIDDEN_TILE_COLOR);
 const int EMPTY_TILE = A_DIM | COLOR_PAIR(EMPTY_TILE_COLOR);
-const int TILE_1 = COLOR_PAIR(TILE_1_COLOR);
-const int TILE_2 = COLOR_PAIR(TILE_2_COLOR);
-const int TILE_3 = COLOR_PAIR(TILE_3_COLOR);
-const int TILE_4 = A_DIM | COLOR_PAIR(TILE_4_COLOR);
+const int TILE_1 = A_BOLD | COLOR_PAIR(TILE_1_COLOR);
+const int TILE_2 = A_BOLD | COLOR_PAIR(TILE_2_COLOR);
+const int TILE_3 = A_BOLD | COLOR_PAIR(TILE_3_COLOR);
+const int TILE_4 = A_BOLD | COLOR_PAIR(TILE_4_COLOR);
 const int TILE_OTHER = COLOR_PAIR(TILE_OTHER_COLOR);
 const int FLAG_TILE = A_BOLD | COLOR_PAIR(FLAG_COLOR);
 const int MINE_TILE = A_BOLD | COLOR_PAIR(MINE_COLOR);
@@ -34,7 +34,7 @@ void Init_UI()
   init_pair(INPUT_TEXT_COLOR, COLOR_WHITE, COLOR_BLUE);
   init_pair(ENTERED_TEXT_COLOR, COLOR_WHITE, COLOR_BLUE);
   init_pair(HIGHLITED_TEXT_COLOR, COLOR_WHITE, COLOR_BLUE);
-  init_pair(HIDDEN_TILE_COLOR, COLOR_BLACK, COLOR_WHITE);
+  init_pair(HIDDEN_TILE_COLOR, COLOR_BLACK, COLOR_YELLOW);
   init_pair(EMPTY_TILE_COLOR, COLOR_BLUE, COLOR_BLACK);
   init_pair(TILE_1_COLOR, COLOR_BLUE, COLOR_BLACK);
   init_pair(TILE_2_COLOR, COLOR_GREEN, COLOR_BLACK);
@@ -42,7 +42,7 @@ void Init_UI()
   init_pair(TILE_3_COLOR, COLOR_RED, COLOR_BLACK);
   init_pair(TILE_4_COLOR, COLOR_BLUE, COLOR_BLACK);
   init_pair(TILE_OTHER_COLOR, COLOR_MAGENTA, COLOR_BLACK);
-  init_pair(FLAG_COLOR, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(FLAG_COLOR, COLOR_MAGENTA, COLOR_YELLOW);
   init_pair(MINE_COLOR, COLOR_BLACK, COLOR_RED);
   attron(COLOR_PAIR(STANDARD_TEXT_COLOR));
   curs_set(FALSE);
@@ -166,9 +166,8 @@ void Show_Game_Creation_Dialog()
   };
   char Menu_Title[] = "Select Difficulty";
   UI_Menu* Game_Creation_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,12);
-  Map_Properties Created_Map_Properties;
+  Game* Main_Game = malloc(sizeof(Game));
   int output = 0;
-  Created_Map_Properties.points = 0;
   Print_Help_Bar("Use Cursor Keys to move up and down and Enter to confirm selection");
   Display_Menu(Game_Creation_Menu);
   output = Run_Menu(Game_Creation_Menu);
@@ -176,36 +175,34 @@ void Show_Game_Creation_Dialog()
   switch(output)
   {
     case 0:
-      Created_Map_Properties.rows = 9;
-      Created_Map_Properties.cols = 9;
-      Created_Map_Properties.mines = 10;
+      setDifficulty(Main_Game,0);
       break;
     case 1:
-      Created_Map_Properties.rows = 16;
-      Created_Map_Properties.cols = 16;
-      Created_Map_Properties.mines = 40;
+      setDifficulty(Main_Game,1);
       break;
     case 2:
-      Created_Map_Properties.rows = 16;
-      Created_Map_Properties.cols = 30;
-      Created_Map_Properties.mines = 99;
+      setDifficulty(Main_Game,2);
       break;
     case 3:
       {
         bool second_time = FALSE;
+        Map_Properties Created_Map_Properties;
         do
         {
           Created_Map_Properties = Show_Custom_Size_Dialog(second_time);
           second_time = TRUE;
         }
         while(!Validate_Map_Properties(Created_Map_Properties));
+        setSize(Main_Game,Created_Map_Properties.rows,Created_Map_Properties.cols);
+        setMineCount(Main_Game,Created_Map_Properties.mines);
+        setDifficulty(Main_Game,3);
       }
       break;
     default:
       return;
       break;
   }
-  Show_Main_Game(Created_Map_Properties);
+  Show_Main_Game(Main_Game);
 }
 
 void Show_Main_Menu()

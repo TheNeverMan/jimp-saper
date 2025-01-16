@@ -2,7 +2,6 @@
 #define INPUT_H
 
 #include "board.h"
-#include "game.h"
 
 typedef struct input
 {
@@ -16,6 +15,7 @@ typedef struct file
     Board inputBoard;
     Input* inputs;
     int inputCount;
+    int mineCount;
 } File;
 
 File readFiles(const char* inputFile, const char* mapFile);

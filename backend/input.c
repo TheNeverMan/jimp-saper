@@ -110,6 +110,7 @@ int readMap(File* file, const char* fileName)
         for(int j = 0; j < file->inputBoard.size.columns; j++)
         {
             result = fscanf(fileStream, "%d", &file->inputBoard.tab[i][j].mineState);
+            if(file->inputBoard.tab[i][j].mineState == 1) file->mineCount++;
             if(result != 1)
             {
                 printf("Wrong map file format!\n");

@@ -13,7 +13,7 @@ typedef struct game
 } Game;
 
 void initGame();
-void gameLoop();
+void gameLoopFile(char* inputFile, char* mapFile);
 void calculateScore(Game* game, int revealedCells);
 
 

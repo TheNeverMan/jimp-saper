@@ -3,6 +3,7 @@
 
 #include "../backend/board.h"
 #include "../backend/input.h"
+#include "../backend/game.h"
 
 void printBoard(const Board* board) 
 {
@@ -74,9 +75,12 @@ void testBoard()
   cleanBoard(&board);
 }
 
+
 int main(int argv, char** argc)
 {
   //testBoard();
-  testReadFiles("test/map.txt", "test/moves.txt");
+  //testReadFiles("test/map.txt", "test/moves.txt");
+
+  gameLoopFile("test/moves.txt", "test/map.txt");
   return 0;
 }
