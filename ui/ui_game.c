@@ -1,6 +1,6 @@
 #include "ui_game.h"
 
-void Update_Game_Title(Game_Windows Windows,Game* Main_Game)
+void Update_Game_Title(Game* Main_Game,Game_Windows Windows)
 {
   int rows = getSize(Main_Game).rows;
   int cols = getSize(Main_Game).columns;
@@ -25,7 +25,7 @@ Game_Windows Create_Game_Window(Game* Main_Game)
     size_x = getSize(Main_Game).columns+2;
   out.Main_Game_Window = newwin(size_y,size_x,0,0);
   box(out.Main_Game_Window,0,0);
-  Update_Game_Title(out, Main_Game);
+  Update_Game_Title(Main_Game,out);
   Move_Window_To_Center(out.Main_Game_Window);
   /* fuck this useless crap of library, not even moving subwindows when moving parents
   so i need to add derwin *after* centering parent, like this bug has 35 years
@@ -157,12 +157,58 @@ void Refresh_Map(Game* Main_Game, Game_Windows Windows, bool was_generated)
   refresh();
 }
 
+void Refresh(Game* Main_Game,Game_Windows Windows,bool was_generated)
+{
+  Update_Game_Title(Main_Game,Windows);
+  Refresh_Map(Main_Game,Windows,was_generated);
+}
+
+void Save_Score(Game* Main_Game, bool is_victorious)
+{
+  char* Field_Descriptions[] = {
+    "Enter name:",
+    "Confirm",
+    (char*)NULL,
+  };
+  char* form_title;
+  int title_attrs;
+  if(is_victorious)
+    {
+      form_title = "You have won!";
+      title_attrs = A_BOLD;
+    }
+  else
+    {
+      form_title = "You have lost!";
+      title_attrs = A_BOLD | SELECTED_TEXT_COLOR;
+    }
+  UI_Form* Command_Form = Create_Form(Field_Descriptions,INPUT_ALPHANUM,form_title,2,title_attrs);
+  Display_Form(Command_Form);
+  char** Output = Run_Form(Command_Form);
+  Destroy_Form(Command_Form);
+  Main_Game->score.success = is_victorious;
+  memcpy(Main_Game->score.name,Output[0],3);
+  Main_Game->score.name[2] = '\0';
+  saveScore(&Main_Game->score,SCORES_FILE);
+  curs_set(FALSE);
+}
+
+void End_Game(Game* Main_Game, Game_Windows Windows, bool is_victorious)
+{
+  Refresh(Main_Game,Windows,TRUE);
+  flash();
+  beep();
+  refresh();
+  Save_Score(Main_Game,is_victorious);
+}
+
 void Game_Loop(Game* Main_Game, Game_Windows Windows)
 {
   int ch = -1;
   bool was_generated = FALSE;
-  Refresh_Map(Main_Game,Windows,was_generated);
-  while((ch = wgetch(Windows.Board_Window)) != (ESCAPE))
+  bool loop = TRUE;
+  Refresh(Main_Game,Windows,was_generated);
+  while(((ch = wgetch(Windows.Board_Window)) != (ESCAPE)) && loop)
   {
   	switch(ch)
     {
@@ -174,8 +220,14 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
             was_generated = TRUE;
           }
           // Reveal_Whole_Map(Main_Game);
-          if(!getFlagState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
-            setRevealState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window),1);
+          if(getFlagState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
+            break;
+          setRevealState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window),1);
+          if(getMineState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
+          {
+            loop = FALSE;
+            End_Game(Main_Game,Windows,FALSE);
+          }
           break;
         }
       case ' ':
@@ -224,13 +276,22 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
           refresh();
           wrefresh(Windows.Board_Window);
           wrefresh(Windows.Main_Game_Window);
+          free(Output[0]);
+          free(Output);
         }
     }
-        Refresh_Map(Main_Game,Windows,was_generated);
+    Refresh(Main_Game,Windows,was_generated);
+    if((getScore(Main_Game)/Main_Game->difficulty) == ((getSize(Main_Game).columns * getSize(Main_Game).rows) - getMineCount(Main_Game)))
+    {
+      loop = FALSE;
+      End_Game(Main_Game,Windows,TRUE);
+    }
+    if(!loop)
+     break;
   }
 }
 
-void Show_Main_Game(Game* Main_Game)
+void Play(Game* Main_Game)
 {
   Game_Windows Windows = Create_Game_Window(Main_Game);
   wmove(Windows.Board_Window,0,0);

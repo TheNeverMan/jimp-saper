@@ -7,6 +7,7 @@
 #include "ui_form.h"
 #include "../backend/interface.h"
 #include "../backend/game.h"
+#include "../backend/score.h"
 
 typedef struct
 {
@@ -14,5 +15,5 @@ typedef struct
   WINDOW* Board_Window;
 } Game_Windows;
 
-void Show_Main_Game(Game* Main_Game);
+void Play(Game* Main_Game);
 void Destroy_Main_Game(Game_Windows Windows);

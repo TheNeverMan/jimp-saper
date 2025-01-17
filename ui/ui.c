@@ -55,36 +55,59 @@ void Uninit_UI()
 
 }
 
+int Compare_Score(const void* a,const void* b)
+{
+  return ((Score*)a)->points <= ((Score*)b)->points;
+}
+
 void Show_Highscores()
 {
-  char* Menu_Options[] = {
-    "9999",
-    "5000",
-    "4500",
-    "3500",
-    "2000",
-    "Back",
-    (char*)NULL
-  };
-  char* Menu_Descriptions[] = {
-    " - Lk",
-    " - Lk",
-    " - Lk",
-    " - LK",
-    " - LK",
-    " ",
-    (char*)NULL
-  };
-  char Menu_Title[] = "Highscores";
-  UI_Menu* Highscore_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,12);
+  Score Scores;
+  int scores_size = readScores(&Scores,SCORES_FILE);
+  if(scores_size == -1)
+    return;
+  int index = scores_size;
+  char** Menu_Options = calloc(scores_size+2,sizeof(char*));
+  char** Menu_Descriptions = calloc(scores_size+2,sizeof(char*));
+  char menu_title[] = "Highscores";
+  char victory_text[] = "Victory";
+  char loss_text[] = "Lost";
+  qsort(Scores.scores,scores_size,sizeof(Score),Compare_Score);
+  while(index --> 0)
+  {
+    Menu_Options[index] = malloc((int)((ceil(log10(Scores.scores[index].points))+1)*sizeof(char)));
+    sprintf(Menu_Options[index],"%d",Scores.scores[index].points);
+    Menu_Descriptions[index] = calloc(NAME_LENGTH+8,sizeof(char));
+    memcpy(Menu_Descriptions[index],Scores.scores[index].name,NAME_LENGTH);
+    Menu_Descriptions[index][NAME_LENGTH-1] = ' ';
+    if(Scores.scores[index].success)
+      memcpy(Menu_Descriptions[index]+NAME_LENGTH,victory_text,strlen(victory_text));
+    else
+      memcpy(Menu_Descriptions[index]+NAME_LENGTH,loss_text,strlen(loss_text));
+
+  }
+  Menu_Options[scores_size] = "Back";
+  Menu_Descriptions[scores_size] = " ";
+  Menu_Options[scores_size+1] = NULL;
+  Menu_Descriptions[scores_size+1] = NULL;
+  UI_Menu* Highscore_Menu = Create_Menu(Menu_Options,Menu_Descriptions,menu_title,scores_size+2,60,12);
   /* make highscores unselectable */
-  int index = ARRAY_SIZE(Menu_Options) - 2;
+  index = scores_size;
   Print_Help_Bar("Use Cursor Keys to move up and down and Enter to confirm selection");
   while(index --> 0)
     item_opts_off(Highscore_Menu->Menu_Items[index],O_SELECTABLE);
   Display_Menu(Highscore_Menu);
   Run_Menu(Highscore_Menu);
   Destroy_Menu(Highscore_Menu);
+  index = scores_size;
+  while(index --> 0)
+  {
+    free(Menu_Options[index]);
+    free(Menu_Descriptions[index]);
+  }
+  free(Menu_Options);
+  free(Menu_Descriptions);
+  free(Scores.scores);
 }
 
 Map_Properties Convert_Char_To_Map_Properties(char** tab)
@@ -164,8 +187,8 @@ void Show_Game_Creation_Dialog()
     " ",
     (char*)NULL
   };
-  char Menu_Title[] = "Select Difficulty";
-  UI_Menu* Game_Creation_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,12);
+  char menu_title[] = "Select Difficulty";
+  UI_Menu* Game_Creation_Menu = Create_Menu(Menu_Options,Menu_Descriptions,menu_title,ARRAY_SIZE(Menu_Options),60,12);
   Game* Main_Game = malloc(sizeof(Game));
   int output = 0;
   Print_Help_Bar("Use Cursor Keys to move up and down and Enter to confirm selection");
@@ -202,7 +225,7 @@ void Show_Game_Creation_Dialog()
       return;
       break;
   }
-  Show_Main_Game(Main_Game);
+  Play(Main_Game);
 }
 
 void Show_Main_Menu()
@@ -215,17 +238,17 @@ void Show_Main_Menu()
   };
   char* Menu_Descriptions[] = {
     " - Start new game",
-    " - Show top 5 scores",
-    " - Leave program :(",
+    " - Show top scores",
+    " - Leave game :(",
     (char*)NULL
   };
-  char Menu_Title[] = "Minesweeper - Leopold Kucinski & Kajetan Wojcik";
+  char menu_title[] = "Minesweeper - Leopold Kucinski & Kajetan Wojcik";
   bool loop = TRUE;
   Init_UI();
   Print_Help_Bar("Use Cursor Keys to move up and down and Enter to confirm selection");
   while(loop)
   {
-    UI_Menu* Main_Menu = Create_Menu(Menu_Options,Menu_Descriptions,Menu_Title,ARRAY_SIZE(Menu_Options),60,10);
+    UI_Menu* Main_Menu = Create_Menu(Menu_Options,Menu_Descriptions,menu_title,ARRAY_SIZE(Menu_Options),60,10);
     size_t selected_option = 0;
     Display_Menu(Main_Menu);
     Display_Logo(TRUE);

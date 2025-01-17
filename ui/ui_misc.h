@@ -9,6 +9,9 @@
 
 #define ENTER 10
 #define ESCAPE 27
+#define SCORES_FILE "scores.txt"
+#define NAME_LENGTH 3
+
 
 typedef enum
 {
