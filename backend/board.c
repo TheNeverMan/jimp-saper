@@ -18,7 +18,7 @@ void initBoard(Board* board, int rows, int cols)
 {
     board->size.rows = rows;
     board->size.columns = cols;
-
+    board->revealedCount = 0;
     board->tab = calloc(board->size.rows, sizeof(SquareState*));
     for (int i = 0; i < board->size.rows; i++)
     {
@@ -41,7 +41,7 @@ void placeMines(Board* board, int firstRow, int firstCol)
             continue;
         }
 
-        board->tab[row][col].mineState = 1; 
+        board->tab[row][col].mineState = 1;
         placed++;
     }
 }
@@ -84,12 +84,12 @@ void cleanBoard(Board* board)
 
 void revealCell(Board* board, int row, int column)
 {
-    if (row < 0 || row >= board->size.rows || column < 0 || column >= board->size.columns) 
+    if (row < 0 || row >= board->size.rows || column < 0 || column >= board->size.columns)
     {
         return;
     }
 
-    if (board->tab[row][column].revealState == 1 || board->tab[row][column].flagState == 1) 
+    if (board->tab[row][column].revealState == 1 || board->tab[row][column].flagState == 1)
     {
         return;
     }
@@ -97,7 +97,7 @@ void revealCell(Board* board, int row, int column)
     board->tab[row][column].revealState = 1;
     board->revealedCount++;
 
-    if (board->tab[row][column].minesNear > 0) 
+    if (board->tab[row][column].minesNear > 0)
     {
         return;
     }

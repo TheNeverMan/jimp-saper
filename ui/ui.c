@@ -18,9 +18,9 @@ const int TILE_3 = A_BOLD | COLOR_PAIR(TILE_3_COLOR);
 const int TILE_4 = A_BOLD | COLOR_PAIR(TILE_4_COLOR);
 const int TILE_5 = A_BOLD | COLOR_PAIR(TILE_5_COLOR);
 const int TILE_6 = A_BOLD | COLOR_PAIR(TILE_6_COLOR);
-const int TILE_OTHER = COLOR_PAIR(TILE_OTHER_COLOR);
+const int TILE_OTHER = A_BOLD | COLOR_PAIR(TILE_OTHER_COLOR);
 const int FLAG_TILE = A_BOLD | COLOR_PAIR(FLAG_COLOR);
-const int MINE_TILE = A_BOLD | COLOR_PAIR(MINE_COLOR);
+const int MINE_TILE = COLOR_PAIR(MINE_COLOR);
 void Init_UI()
 {
   initscr();
@@ -37,7 +37,7 @@ void Init_UI()
   init_pair(ENTERED_TEXT_COLOR, COLOR_WHITE, COLOR_BLUE);
   init_pair(HIGHLITED_TEXT_COLOR, COLOR_WHITE, COLOR_BLUE);
   init_pair(HIDDEN_TILE_COLOR, COLOR_BLACK, COLOR_YELLOW);
-  init_pair(EMPTY_TILE_COLOR, COLOR_BLUE, COLOR_BLACK);
+  init_pair(EMPTY_TILE_COLOR, COLOR_CYAN, COLOR_BLACK);
   init_pair(TILE_1_COLOR, COLOR_BLUE, COLOR_BLACK);
   init_pair(TILE_2_COLOR, COLOR_GREEN, COLOR_BLACK);
   init_pair(TILE_3_COLOR, COLOR_RED, COLOR_BLACK);
@@ -46,7 +46,7 @@ void Init_UI()
   init_pair(TILE_5_COLOR, COLOR_MAGENTA, COLOR_BLACK);
   init_pair(TILE_6_COLOR, COLOR_CYAN, COLOR_BLACK);
   init_pair(TILE_OTHER_COLOR, COLOR_MAGENTA, COLOR_BLACK);
-  init_pair(FLAG_COLOR, COLOR_MAGENTA, COLOR_YELLOW);
+  init_pair(FLAG_COLOR, COLOR_MAGENTA, COLOR_BLACK);
   init_pair(MINE_COLOR, COLOR_BLACK, COLOR_RED);
   attron(COLOR_PAIR(STANDARD_TEXT_COLOR));
   curs_set(FALSE);
@@ -142,7 +142,7 @@ bool Validate_Map_Properties(Map_Properties Properties)
     return FALSE;
   if(Properties.rows < 5 || Properties.cols < 5 || Properties.mines < 1)
     return FALSE;
-  if(Properties.rows > window_y || Properties.cols > window_x || Properties.mines > 999)
+  if(Properties.rows > window_y || Properties.cols > window_x || Properties.mines > 9999)
     return FALSE;
   return TRUE;
 }
@@ -235,7 +235,14 @@ void Show_Game_Creation_Dialog()
       return;
       break;
   }
+  setGameState(Main_Game,0);
+  Main_Game->won = 0;
+  Main_Game->score.points = 0;
+  Main_Game->score.correctMoves = 0;
+  Main_Game->score.success = 0;
+  Main_Game->score.scores = NULL;
   Play(Main_Game);
+  free(Main_Game);
 }
 
 void Show_Main_Menu()
