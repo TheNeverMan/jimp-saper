@@ -161,9 +161,9 @@ int getScore(const Game* game)
     size_t index_x = getSize(game).columns;
     size_t revealed_tiles = 0;
     while((index_x = getSize(game).columns) && index_y --> 0)
-        while(index_x --> 0)
-          if(getRevealState(game,index_y,index_x))
-            revealed_tiles++;
+      while(index_x --> 0)
+        if(getRevealState(game,index_y,index_x))
+          revealed_tiles++;
     calculateScore(game,revealed_tiles);
     return game->score.points;
 }

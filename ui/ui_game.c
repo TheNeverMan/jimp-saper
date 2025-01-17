@@ -258,22 +258,70 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
         }
       case 'c':
         {
-          char* Field_Descriptions[] = {
-            "Enter command:",
-            "Confirm",
-            (char*)NULL,
-          };
-          UI_Form* Command_Form = Create_Form(Field_Descriptions,INPUT_ALPHANUM,"Enter command",2,A_BOLD);
-          Display_Form(Command_Form);
-          char** Output = Run_Form(Command_Form);
-          Destroy_Form(Command_Form);
-          box(Windows.Main_Game_Window,0,0);
-          curs_set(TRUE);
-          refresh();
-          wrefresh(Windows.Board_Window);
-          wrefresh(Windows.Main_Game_Window);
-          free(Output[0]);
-          free(Output);
+          char action = ' ';
+          int row = 0;
+          int col = 0;
+          bool second_time = FALSE;
+          int title_attrs = A_BOLD;
+          int result = 0;
+          do
+          {
+            char* form_title = "Enter Command";
+            char* Field_Descriptions[] = {
+              "Enter command:",
+              "Confirm",
+              (char*)NULL,
+            };
+            if(!second_time)
+            {
+              form_title = "Enter Command";
+              title_attrs = A_BOLD | COLOR_PAIR(STANDARD_TEXT_COLOR);
+            }
+            else
+            {
+              form_title = "Invalid Command!";
+              title_attrs = A_BOLD | COLOR_PAIR(SELECTED_TEXT_COLOR);
+            }
+            UI_Form* Command_Form = Create_Form(Field_Descriptions,INPUT_ALPHANUM,form_title,2,title_attrs);
+            Display_Form(Command_Form);
+            char** Output = Run_Form(Command_Form);
+            Destroy_Form(Command_Form);
+            box(Windows.Main_Game_Window,0,0);
+            curs_set(TRUE);
+            refresh();
+            wrefresh(Windows.Board_Window);
+            wrefresh(Windows.Main_Game_Window);
+            result = sscanf(Output[0],"%c %d %d",&action,&row,&col);
+            free(Output[0]);
+            free(Output);
+            if(action != 'r' && action != 'f')
+              result = 0;
+            if(row < 0 || row > getSize(Main_Game).rows)
+              result = 0;
+            if(col < 0 || col > getSize(Main_Game).columns)
+              result = 0;
+            second_time = TRUE;
+          }
+          while(result != 3);
+
+          if(action == 'r')
+          {
+            if(!was_generated)
+            {
+              placeMines(&Main_Game->board,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
+              was_generated = TRUE;
+            }
+            setRevealState(Main_Game,row,col,1);
+            if(getMineState(Main_Game,row,col))
+            {
+              loop = FALSE;
+              End_Game(Main_Game,Windows,FALSE);
+            }
+          }
+          else if(was_generated)
+            setFlagState(Main_Game,row,col,1-getFlagState(Main_Game,row,col));
+
+
         }
     }
     Refresh(Main_Game,Windows,was_generated);
