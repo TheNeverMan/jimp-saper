@@ -88,7 +88,10 @@ char Get_Tile_Char(Game* Main_Game,int y, int x)
   char out = ' ';
   if(getRevealState(Main_Game,y,x))
   {
-    out = '0' + getMinesNear(Main_Game,y,x);
+    if(getMinesNear(Main_Game,y,x))
+      out = '0' + getMinesNear(Main_Game,y,x);
+    else
+      out = '.';
     if(getMineState(Main_Game,y,x))
       out = '*';
   }
