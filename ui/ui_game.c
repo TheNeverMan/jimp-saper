@@ -245,6 +245,12 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
           wmove(Windows.Board_Window,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)-1);
           break;
         }
+      case 'd':
+        {
+          Reveal_Whole_Map(Main_Game);
+          Refresh(Main_Game,Windows,was_generated);
+          continue;
+        }
       case KEY_RIGHT:
         {
           wmove(Windows.Board_Window,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)+1);
