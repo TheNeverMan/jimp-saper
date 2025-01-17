@@ -66,9 +66,9 @@ char** Create_Ouput_Data(UI_Form* Form)
 char** Run_Form(UI_Form* Form)
 {
   int ch = -1;
-  char** out = NULL;
-  while((ch = wgetch(Form->Form_Window)) != (KEY_F(1)))
-	{	switch(ch)
+  while((ch = wgetch(Form->Form_Window)) != (ESCAPE))
+	{
+    switch(ch)
 		{
       case 10: /* new line */
           if(field_index(current_field(Form->Form)) == (Form->descriptions_length-1))

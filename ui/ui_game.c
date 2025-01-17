@@ -1,6 +1,6 @@
 #include "ui_game.h"
 
-void Update_Game_Title(Game_Windows Windows,Game* Main_Game)
+void Update_Game_Title(Game* Main_Game,Game_Windows Windows)
 {
   int rows = getSize(Main_Game).rows;
   int cols = getSize(Main_Game).columns;
@@ -25,7 +25,7 @@ Game_Windows Create_Game_Window(Game* Main_Game)
     size_x = getSize(Main_Game).columns+2;
   out.Main_Game_Window = newwin(size_y,size_x,0,0);
   box(out.Main_Game_Window,0,0);
-  Update_Game_Title(out, Main_Game);
+  Update_Game_Title(Main_Game,out);
   Move_Window_To_Center(out.Main_Game_Window);
   /* fuck this useless crap of library, not even moving subwindows when moving parents
   so i need to add derwin *after* centering parent, like this bug has 35 years
@@ -33,7 +33,7 @@ Game_Windows Create_Game_Window(Game* Main_Game)
   why is this still a thing */
   out.Board_Window = derwin(out.Main_Game_Window,getSize(Main_Game).rows,getSize(Main_Game).columns,3,1);
   Display_Logo(TRUE);
-  Print_Help_Bar("Use Cursor Keys to navigate on the map, Space to toggle flag, Enter reveals tile. Alternatively C opens command prompt.");
+  Print_Help_Bar("Use Cursor Keys to navigate on the map, Space to toggle flag, Enter reveals tile. Alternatively C opens command prompt. Escape leaves game.");
   Print_Horizontal_Bar_In_Window(out.Main_Game_Window,2);
   curs_set(TRUE);
   keypad(out.Main_Game_Window, TRUE);
@@ -63,6 +63,12 @@ int Get_Tile_Atrs(Game* Main_Game, int y, int x)
       case 4:
         out = TILE_4;
         break;
+      case 5:
+        out = TILE_5;
+        break;
+      case 6:
+        out = TILE_6;
+        break;
       default:
         out = TILE_OTHER;
     }
@@ -82,26 +88,10 @@ char Get_Tile_Char(Game* Main_Game,int y, int x)
   char out = ' ';
   if(getRevealState(Main_Game,y,x))
   {
-    switch(getMinesNear(Main_Game,y,x))
-    {
-      case 0:
-        out = '.';
-        break;
-      case 1:
-        out = '1';
-        break;
-      case 2:
-        out = '2';
-        break;
-      case 3:
-        out = '3';
-        break;
-      case 4:
-        out = '4';
-        break;
-      default:
-        out = '0' + getMinesNear(Main_Game,y,x);
-    }
+    if(getMinesNear(Main_Game,y,x))
+      out = '0' + getMinesNear(Main_Game,y,x);
+    else
+      out = '.';
     if(getMineState(Main_Game,y,x))
       out = '*';
   }
@@ -157,12 +147,58 @@ void Refresh_Map(Game* Main_Game, Game_Windows Windows, bool was_generated)
   refresh();
 }
 
+void Refresh(Game* Main_Game,Game_Windows Windows,bool was_generated)
+{
+  Update_Game_Title(Main_Game,Windows);
+  Refresh_Map(Main_Game,Windows,was_generated);
+}
+
+void Save_Score(Game* Main_Game, bool is_victorious)
+{
+  char* Field_Descriptions[] = {
+    "Enter name:",
+    "Confirm",
+    (char*)NULL,
+  };
+  char* form_title;
+  int title_attrs;
+  if(is_victorious)
+    {
+      form_title = "You have won!";
+      title_attrs = A_BOLD;
+    }
+  else
+    {
+      form_title = "You have lost!";
+      title_attrs = A_BOLD | SELECTED_TEXT_COLOR;
+    }
+  UI_Form* Command_Form = Create_Form(Field_Descriptions,INPUT_ALPHANUM,form_title,2,title_attrs);
+  Display_Form(Command_Form);
+  char** Output = Run_Form(Command_Form);
+  Destroy_Form(Command_Form);
+  Main_Game->score.success = is_victorious;
+  memcpy(Main_Game->score.name,Output[0],3);
+  Main_Game->score.name[2] = '\0';
+  saveScore(&Main_Game->score,SCORES_FILE);
+  curs_set(FALSE);
+}
+
+void End_Game(Game* Main_Game, Game_Windows Windows, bool is_victorious)
+{
+  Refresh(Main_Game,Windows,TRUE);
+  flash();
+  beep();
+  refresh();
+  Save_Score(Main_Game,is_victorious);
+}
+
 void Game_Loop(Game* Main_Game, Game_Windows Windows)
 {
   int ch = -1;
   bool was_generated = FALSE;
-  Refresh_Map(Main_Game,Windows,was_generated);
-  while((ch = wgetch(Windows.Board_Window)) != (KEY_F(1)))
+  bool loop = TRUE;
+  Refresh(Main_Game,Windows,was_generated);
+  while(((ch = wgetch(Windows.Board_Window)) != (ESCAPE)) && loop)
   {
     //Refresh_Map(Properties,Windows);
   	switch(ch)
@@ -171,12 +207,18 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
         {
           if(!was_generated)
           {
-            placeMines(&Main_Game->board,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
+            generateMap(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
             was_generated = TRUE;
           }
           // Reveal_Whole_Map(Main_Game);
-          if(!getFlagState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
-            setRevealState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window),1);
+          if(getFlagState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
+            break;
+          setRevealState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window),1);
+          if(getMineState(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)))
+          {
+            loop = FALSE;
+            End_Game(Main_Game,Windows,FALSE);
+          }
           break;
         }
       case ' ':
@@ -204,6 +246,12 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
           wmove(Windows.Board_Window,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)-1);
           break;
         }
+      case 'd':
+        {
+          Reveal_Whole_Map(Main_Game);
+          Refresh(Main_Game,Windows,was_generated);
+          continue;
+        }
       case KEY_RIGHT:
         {
           wmove(Windows.Board_Window,getcury(Windows.Board_Window),getcurx(Windows.Board_Window)+1);
@@ -211,27 +259,84 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
         }
       case 'c':
         {
-          char* Field_Descriptions[] = {
-            "Enter command:",
-            "Confirm",
-            (char*)NULL,
-          };
-          UI_Form* Command_Form = Create_Form(Field_Descriptions,INPUT_ALPHANUM,"Enter command",2,A_BOLD);
-          Display_Form(Command_Form);
-          char** Output = Run_Form(Command_Form);
-          Destroy_Form(Command_Form);
-          box(Windows.Main_Game_Window,0,0);
-          curs_set(TRUE);
-          refresh();
-          wrefresh(Windows.Board_Window);
-          wrefresh(Windows.Main_Game_Window);
+          char action = ' ';
+          int row = 0;
+          int col = 0;
+          bool second_time = FALSE;
+          int title_attrs = A_BOLD;
+          int result = 0;
+          do
+          {
+            char* form_title = "Enter Command";
+            char* Field_Descriptions[] = {
+              "Enter command:",
+              "Confirm",
+              (char*)NULL,
+            };
+            if(!second_time)
+            {
+              form_title = "Enter Command";
+              title_attrs = A_BOLD | COLOR_PAIR(STANDARD_TEXT_COLOR);
+            }
+            else
+            {
+              form_title = "Invalid Command!";
+              title_attrs = A_BOLD | COLOR_PAIR(SELECTED_TEXT_COLOR);
+            }
+            UI_Form* Command_Form = Create_Form(Field_Descriptions,INPUT_ALPHANUM,form_title,2,title_attrs);
+            Display_Form(Command_Form);
+            char** Output = Run_Form(Command_Form);
+            Destroy_Form(Command_Form);
+            box(Windows.Main_Game_Window,0,0);
+            curs_set(TRUE);
+            refresh();
+            wrefresh(Windows.Board_Window);
+            wrefresh(Windows.Main_Game_Window);
+            result = sscanf(Output[0],"%c %d %d",&action,&row,&col);
+            free(Output[0]);
+            free(Output);
+            if(action != 'r' && action != 'f')
+              result = 0;
+            if(row < 0 || row > getSize(Main_Game).rows)
+              result = 0;
+            if(col < 0 || col > getSize(Main_Game).columns)
+              result = 0;
+            second_time = TRUE;
+          }
+          while(result != 3);
+
+          if(action == 'r')
+          {
+            if(!was_generated)
+            {
+              generateMap(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
+              was_generated = TRUE;
+            }
+            setRevealState(Main_Game,row,col,1);
+            if(getMineState(Main_Game,row,col))
+            {
+              loop = FALSE;
+              End_Game(Main_Game,Windows,FALSE);
+            }
+          }
+          else if(was_generated)
+            setFlagState(Main_Game,row,col,1-getFlagState(Main_Game,row,col));
+
+
         }
     }
-        Refresh_Map(Main_Game,Windows,was_generated);
+    Refresh(Main_Game,Windows,was_generated);
+    if((getScore(Main_Game)/Main_Game->difficulty) == ((getSize(Main_Game).columns * getSize(Main_Game).rows) - getMineCount(Main_Game)))
+    {
+      loop = FALSE;
+      End_Game(Main_Game,Windows,TRUE);
+    }
+    if(!loop)
+     break;
   }
 }
 
-void Show_Main_Game(Game* Main_Game)
+void Play(Game* Main_Game)
 {
   Game_Windows Windows = Create_Game_Window(Main_Game);
   /*Properties.Game_Board = generateBoard(Properties.rows,Properties.cols,Properties.mines);*/

@@ -7,7 +7,7 @@
 void saveScore(const Score* score, const char* fileName)
 {
     FILE* file = fopen(fileName, "a");
-    if (!file) 
+    if (!file)
     {
         perror("Error opening file for saving scores");
         return;
@@ -21,7 +21,7 @@ int readScores(Score* score, const char* fileName)
 {
     FILE* file = fopen(fileName, "r");
     int scores = 0;
-    if (!file) 
+    if (!file)
     {
         perror("Error opening file for reading scores");
         return -1;
@@ -29,16 +29,16 @@ int readScores(Score* score, const char* fileName)
 
     char temps[3];
     int temp;
-    if(fscanf(file, " %s %d %d %d", temps, &temp, &temp, &temp) != 4)
+    while(fscanf(file, " %s %d %d %d", temps, &temp, &temp, &temp) == 4)
+      scores++;
+
+    if(!scores)
     {
         fprintf(stderr, "Error reading score data from file\n");
         fclose(file);
         return -1;
     }
-    else
-    {
-        scores++;
-    }
+
 
     score->scores = calloc(scores, sizeof(Score));
     rewind(file);
@@ -50,5 +50,5 @@ int readScores(Score* score, const char* fileName)
 
 
     fclose(file);
-    return 0;
+    return scores;
 }

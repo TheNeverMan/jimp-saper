@@ -9,6 +9,7 @@ typedef struct game
     Board board;
     Score score;
     int ended;
+    int won;
     int difficulty;
 } Game;
 

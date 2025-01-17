@@ -21,7 +21,7 @@ void gameLoopFile(char* inputFile, char* mapFile)
         if(i == file.inputCount)
         {
             game.ended = 1;
-            won = 1;
+            won = 0;
             break;
         }
 
@@ -45,7 +45,7 @@ void gameLoopFile(char* inputFile, char* mapFile)
                 if(game.board.tab[file.inputs[i].row][file.inputs[i].column].mineState == 1)
                 {
                     game.ended = 1;
-                    won = 1;
+                    won = 0;
                     break;
                 }
                 else if(game.board.tab[file.inputs[i].row][file.inputs[i].column].revealState == 0)
@@ -80,7 +80,7 @@ void gameLoopFile(char* inputFile, char* mapFile)
         if(game.score.points == ((game.board.size.columns * game.board.size.rows) - file.mineCount))
         {
             game.ended = 1;
-            won = 0;
+            won = 1;
             break;
         }
 
