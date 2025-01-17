@@ -57,7 +57,12 @@ void Uninit_UI()
 
 int Compare_Score(const void* a,const void* b)
 {
-  return ((Score*)a)->points <= ((Score*)b)->points;
+  const int points_a = ((Score*)a)->points;
+  const int points_b = ((Score*)b)->points;
+  // printf("%i %i\n",points_a,points_b);
+  if (points_a < points_b) return 1;
+  if (points_a > points_b) return -1;
+  return 0;
 }
 
 void Show_Highscores()
@@ -66,14 +71,15 @@ void Show_Highscores()
   int scores_size = readScores(&Scores,SCORES_FILE);
   if(scores_size == -1)
     return;
-  int index = scores_size;
+  int index = 0;
   char** Menu_Options = calloc(scores_size+2,sizeof(char*));
   char** Menu_Descriptions = calloc(scores_size+2,sizeof(char*));
   char menu_title[] = "Highscores";
   char victory_text[] = "Victory";
   char loss_text[] = "Lost";
-  qsort(Scores.scores,scores_size,sizeof(Score),Compare_Score);
-  while(index --> 0)
+  /* why are you like this */
+  qsort(&Scores.scores[0],scores_size,sizeof(Score),Compare_Score);
+  while(index < scores_size)
   {
     Menu_Options[index] = malloc((int)((ceil(log10(Scores.scores[index].points))+1)*sizeof(char)));
     sprintf(Menu_Options[index],"%d",Scores.scores[index].points);
@@ -84,7 +90,7 @@ void Show_Highscores()
       memcpy(Menu_Descriptions[index]+NAME_LENGTH,victory_text,strlen(victory_text));
     else
       memcpy(Menu_Descriptions[index]+NAME_LENGTH,loss_text,strlen(loss_text));
-
+    index++;
   }
   Menu_Options[scores_size] = "Back";
   Menu_Descriptions[scores_size] = " ";
