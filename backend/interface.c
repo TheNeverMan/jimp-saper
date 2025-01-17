@@ -19,6 +19,16 @@ int getGameState(const Game* game)
     return game->ended;
 }
 
+int calcWinState(Game* game)
+{
+    if(game->board.revealedCount == ((game->board.size.columns * game->board.size.rows) - game->board.mineCount))
+    {
+        game->won = 1;
+        game->ended = 1;
+    }
+    return game->won;
+}
+
 void setSize(Game* game, int rows, int columns)
 {
     game->board.size.rows = rows;
@@ -139,7 +149,7 @@ void setDifficulty(Game* game, int difficulty)
         break;
 
     case 3:
-        game->difficulty = 4;
+        game->difficulty = 2;
         game->board.size = getSize(game);
         game->board.mineCount = getMineCount(game);
         break;
@@ -152,15 +162,22 @@ void setDifficulty(Game* game, int difficulty)
         break;
     }
 
-    generateBoard(&game->board, game->board.size.rows, game->board.size.columns, game->board.mineCount);
+    initBoard(&game->board, game->board.size.rows, game->board.size.columns);
 }
 
 int getScore(const Game* game)
 {
+    calculateScore(game, game->board.revealedCount);
     return game->score.points;
 }
 
 int getMinesNear(const Game* game, int row, int column)
 {
     return game->board.tab[row][column].minesNear;
+}
+
+void generateMap(Game* game, int firstMoveRow, int firstMoveCol)
+{
+    placeMines(&game->board, firstMoveRow, firstMoveCol);
+    calculateMines(&game->board);
 }

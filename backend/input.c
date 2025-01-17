@@ -103,7 +103,7 @@ int readMap(File* file, const char* fileName)
     rewind(fileStream);
     for(int i = 0; i < 2; i++) fscanf(fileStream, "%d", &temp);
 
-    file->inputBoard = initBoard(file->inputBoard.size.rows, file->inputBoard.size.columns);
+    initBoard(&file->inputBoard, file->inputBoard.size.rows, file->inputBoard.size.columns);
 
     for(int i = 0; i < file->inputBoard.size.rows; i++)
     {
