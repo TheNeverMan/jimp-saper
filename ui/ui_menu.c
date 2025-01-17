@@ -8,7 +8,7 @@ UI_Menu* Create_Menu(char** Menu_Options, char** Menu_Descriptions, char* Menu_T
   out->Menu_Descriptions = Menu_Descriptions;
   out->Menu_Title = Menu_Title;
   out->window_cols = window_cols;
-  out->window_rows = window_rows;
+  out->window_rows = options_length + 5;
   out->options_length = options_length;
   out->Menu_Items = (ITEM**)calloc(options_length+1, sizeof(ITEM*));
   out->Menu_Window = Create_Window_In_The_Middle(out->window_rows,out->window_cols);
@@ -30,7 +30,10 @@ void Display_Menu(UI_Menu* out)
   set_menu_back(out->Menu, COLOR_PAIR(SELECTABLE_TEXT_COLOR) | A_DIM);
   set_menu_grey(out->Menu, COLOR_PAIR(DISABLED_TEXT_COLOR) | A_BOLD | A_UNDERLINE);
   box(out->Menu_Window,0,0);
-  Print_In_The_Middle(out->Menu_Window,1,0,out->window_cols,out->Menu_Title,STANDARD_TEXT_COLOR);
+  int title_pos = (getmaxx(out->Menu_Window)-strlen(out->Menu_Title))/2;
+  wattron(out->Menu_Window,STANDARD_TEXT_COLOR | A_BOLD);
+  mvwprintw(out->Menu_Window,1,title_pos,"%s",out->Menu_Title);
+  wattroff(out->Menu_Window,STANDARD_TEXT_COLOR | A_BOLD);
   Print_Horizontal_Bar_In_Window(out->Menu_Window,2);
   refresh();
   post_menu(out->Menu);
