@@ -63,6 +63,12 @@ int Get_Tile_Atrs(Game* Main_Game, int y, int x)
       case 4:
         out = TILE_4;
         break;
+      case 5:
+        out = TILE_5;
+        break;
+      case 6:
+        out = TILE_6;
+        break;
       default:
         out = TILE_OTHER;
     }
@@ -82,26 +88,7 @@ char Get_Tile_Char(Game* Main_Game,int y, int x)
   char out = ' ';
   if(getRevealState(Main_Game,y,x))
   {
-    switch(getMinesNear(Main_Game,y,x))
-    {
-      case 0:
-        out = '.';
-        break;
-      case 1:
-        out = '1';
-        break;
-      case 2:
-        out = '2';
-        break;
-      case 3:
-        out = '3';
-        break;
-      case 4:
-        out = '4';
-        break;
-      default:
-        out = '0' + getMinesNear(Main_Game,y,x);
-    }
+    out = '0' + getMinesNear(Main_Game,y,x);
     if(getMineState(Main_Game,y,x))
       out = '*';
   }
