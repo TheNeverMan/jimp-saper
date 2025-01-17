@@ -149,11 +149,13 @@ void Refresh_Map(Game* Main_Game, Game_Windows Windows, bool was_generated)
 
 void Refresh(Game* Main_Game,Game_Windows Windows,bool was_generated)
 {
+  curs_set(FALSE);
   Update_Game_Title(Main_Game,Windows);
   Refresh_Map(Main_Game,Windows,was_generated);
+  curs_set(TRUE);
 }
 
-void Save_Score(Game* Main_Game, bool is_victorious)
+void Save_Score(Game* Main_Game, bool is_victorious,int score)
 {
   char* Field_Descriptions[] = {
     "Enter name:",
@@ -177,6 +179,7 @@ void Save_Score(Game* Main_Game, bool is_victorious)
   char** Output = Run_Form(Command_Form);
   Destroy_Form(Command_Form);
   Main_Game->score.success = is_victorious;
+  Main_Game->score.points = score;
   memcpy(Main_Game->score.name,Output[0],3);
   Main_Game->score.name[2] = '\0';
   saveScore(&Main_Game->score,SCORES_FILE);
@@ -189,7 +192,11 @@ void End_Game(Game* Main_Game, Game_Windows Windows, bool is_victorious)
   flash();
   beep();
   refresh();
-  Save_Score(Main_Game,is_victorious);
+  int score = getScore(Main_Game);
+  Reveal_Whole_Map(Main_Game);
+  Refresh_Map(Main_Game,Windows,TRUE);
+  wgetch(Windows.Board_Window);
+  Save_Score(Main_Game,is_victorious,score);
 }
 
 void Game_Loop(Game* Main_Game, Game_Windows Windows)
@@ -325,7 +332,7 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
         }
     }
     Refresh(Main_Game,Windows,was_generated);
-    if((getScore(Main_Game)/Main_Game->difficulty) == ((getSize(Main_Game).columns * getSize(Main_Game).rows) - getMineCount(Main_Game)))
+    if(calcWinState(Main_Game))
     {
       loop = FALSE;
       End_Game(Main_Game,Windows,TRUE);

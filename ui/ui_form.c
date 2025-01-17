@@ -19,7 +19,7 @@ UI_Form* Create_Form(char** Field_Descriptions, Input_Type Approved_Chars, char*
       break;
     out->Form_Fields[index] = new_field(1,10,index*2+2, label_margin + 2,0,0);
     set_field_fore(out->Form_Fields[index], COLOR_PAIR(HIGHLITED_TEXT_COLOR) | A_BOLD);
-    set_field_back(out->Form_Fields[index], COLOR_PAIR(ENTERED_TEXT_COLOR) | A_DIM);
+    set_field_back(out->Form_Fields[index], COLOR_PAIR(ENTERED_TEXT_COLOR) | A_BOLD);
   }
   out->Form_Fields[descriptions_length] = NULL;
   out->Form = new_form(out->Form_Fields);
