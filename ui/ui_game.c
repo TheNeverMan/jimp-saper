@@ -206,7 +206,7 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
         {
           if(!was_generated)
           {
-            placeMines(&Main_Game->board,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
+            generateMap(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
             was_generated = TRUE;
           }
           // Reveal_Whole_Map(Main_Game);
@@ -308,7 +308,7 @@ void Game_Loop(Game* Main_Game, Game_Windows Windows)
           {
             if(!was_generated)
             {
-              placeMines(&Main_Game->board,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
+              generateMap(Main_Game,getcury(Windows.Board_Window),getcurx(Windows.Board_Window));
               was_generated = TRUE;
             }
             setRevealState(Main_Game,row,col,1);
