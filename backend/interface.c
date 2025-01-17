@@ -19,6 +19,16 @@ int getGameState(const Game* game)
     return game->ended;
 }
 
+int calcWinState(Game* game)
+{
+    if(game->board.revealedCount == ((game->board.size.columns * game->board.size.rows) - game->board.mineCount))
+    {
+        game->won = 1;
+        game->ended = 1;
+    }
+    return game->won;
+}
+
 void setSize(Game* game, int rows, int columns)
 {
     game->board.size.rows = rows;
@@ -44,7 +54,7 @@ int setRevealState(Game* game, int row, int column, int state)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Setting invalid row or column! %ix%i\n",row,column);
+        printf("Setting invalid row or column!\n");
         return -1;
     }
 
@@ -64,7 +74,7 @@ int getRevealState(const Game* game, int row, int column)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Getting invalid row or column! %ix%i\n",row,column);
+        printf("Getting invalid row or column!\n");
         return -1;
     }
 
@@ -75,7 +85,7 @@ int setMineState(Game* game, int row, int column, int state)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Setting invalid row or column! %ix%i\n",row,column);
+        printf("Setting invalid row or column!\n");
         return -1;
     }
     game->board.tab[row][column].mineState = state;
@@ -86,17 +96,17 @@ int getMineState(const Game* game, int row, int column)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Getting invalid row or column! %ix%i\n",row,column);
+        printf("Getting invalid row or column!\n");
         return -1;
     }
     return game->board.tab[row][column].mineState;
 }
 
-int setFlagState(Game* game, int row, int column, int state)
+int setflagState(Game* game, int row, int column, int state)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Setting invalid row or column! %ix%i\n",row,column);
+        printf("Setting invalid row or column!\n");
         return -1;
     }
     game->board.tab[row][column].flagState = state;
@@ -107,7 +117,7 @@ int getFlagState(const Game* game, int row, int column)
 {
     if(row < 0 || row >= game->board.size.rows || column < 0 || column >= game->board.size.columns)
     {
-        printf("Getting invalid row or column! %ix%i\n",row,column);
+        printf("Getting invalid row or column!\n");
         return -1;
     }
     return game->board.tab[row][column].flagState;
@@ -139,7 +149,7 @@ void setDifficulty(Game* game, int difficulty)
         break;
 
     case 3:
-        game->difficulty = 4;
+        game->difficulty = 2;
         game->board.size = getSize(game);
         game->board.mineCount = getMineCount(game);
         break;
@@ -157,18 +167,17 @@ void setDifficulty(Game* game, int difficulty)
 
 int getScore(const Game* game)
 {
-    size_t index_y = getSize(game).rows;
-    size_t index_x = getSize(game).columns;
-    size_t revealed_tiles = 0;
-    while((index_x = getSize(game).columns) && index_y --> 0)
-      while(index_x --> 0)
-        if(getRevealState(game,index_y,index_x))
-          revealed_tiles++;
-    calculateScore(game,revealed_tiles);
+    calculateScore(game, game->board.revealedCount);
     return game->score.points;
 }
 
 int getMinesNear(const Game* game, int row, int column)
 {
     return game->board.tab[row][column].minesNear;
+}
+
+void generateMap(Game* game, int firstMoveRow, int firstMoveCol)
+{
+    placeMines(&game->board, firstMoveRow, firstMoveCol);
+    calculateMines(&game->board);
 }

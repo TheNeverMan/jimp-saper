@@ -22,9 +22,10 @@ typedef struct board
     int mineCount;
     int firstMoveRow;
     int firstMoveCol;
+    int revealedCount;
 } Board;
 
-Board initBoard(int rows, int cols);
+void initBoard(Board* board, int rows, int cols);
 void placeMines(Board* board, int firstRow, int firstCol);
 void calculateMines(Board* board);
 void revealCell(Board* board, int row, int column);

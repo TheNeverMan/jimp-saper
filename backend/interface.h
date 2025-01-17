@@ -24,4 +24,8 @@ int getFlagState(const Game* game, int row, int column); /* 0 - brak flagi, 1 - 
 int getScore(const Game* game);
 int getMinesNear(const Game* game, int row, int column);
 
+/* Helpers */
+void generateMap(Game* game, int firstRow, int firstColumn);
+int calcWinState(Game* game);
+
 #endif

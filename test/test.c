@@ -4,6 +4,7 @@
 #include "../backend/board.h"
 #include "../backend/input.h"
 #include "../backend/game.h"
+#include "../backend/interface.h"
 
 void printBoard(const Board* board) 
 {
@@ -13,7 +14,7 @@ void printBoard(const Board* board)
     {
       if (board->tab[i][j].mineState == 1) 
       {
-        printf("1 ");
+        printf("* ");
       } 
       else 
       {
@@ -44,26 +45,27 @@ void testReadFiles(const char* mapFile, const char* inputFile)
 
 void testBoard() 
 {
-  Board board;
-  generateBoard(&board, 9, 9, 10);
+  Game game;
+  setDifficulty(&game, 1);
+  generateBoard(&game.board, game.board.size.rows, game.board.size.columns, game.board.mineCount);
 
   int mineCount = 0;
-  for (int i = 0; i < board.size.rows; i++) 
+  for (int i = 0; i < game.board.size.rows; i++) 
   {
-    for (int j = 0; j < board.size.columns; j++)
+    for (int j = 0; j < game.board.size.columns; j++)
     {
-      if (board.tab[i][j].mineState == 1)
+      if (game.board.tab[i][j].mineState == 1)
       {
         mineCount++;
       }
     }
   }
 
-  printBoard(&board);
+  printBoard(&game.board);
 
-  printf("\nExpected Mines: %d, Found Mines: %d\n", board.mineCount, mineCount);
+  printf("\nExpected Mines: %d, Found Mines: %d\n", game.board.mineCount, mineCount);
 
-  if (mineCount == board.mineCount)
+  if (mineCount == game.board.mineCount)
   {
     printf("Test Passed: Correct number of mines placed.\n");
   } 
@@ -72,15 +74,15 @@ void testBoard()
     printf("Test Failed: Incorrect number of mines.\n");
   }
 
-  cleanBoard(&board);
+  cleanBoard(&game.board);
 }
 
 
 int main(int argv, char** argc)
 {
-  //testBoard();
+  testBoard();
   //testReadFiles("test/map.txt", "test/moves.txt");
 
-  gameLoopFile("test/moves.txt", "test/map.txt");
+  //gameLoopFile("test/moves.txt", "test/map.txt");
   return 0;
 }
