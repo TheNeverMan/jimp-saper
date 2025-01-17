@@ -182,6 +182,11 @@ void Save_Score(Game* Main_Game, bool is_victorious,int score)
   Main_Game->score.points = score;
   memcpy(Main_Game->score.name,Output[0],3);
   Main_Game->score.name[2] = '\0';
+  if(Output[0][0] == ' ' && Output[0][1] == ' ')
+  {
+    Main_Game->score.name[0] = 'N';
+    Main_Game->score.name[1] = 'N';
+  }
   saveScore(&Main_Game->score,SCORES_FILE);
   curs_set(FALSE);
 }
